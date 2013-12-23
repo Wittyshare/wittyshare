@@ -12,7 +12,6 @@
 *.la
 *.a
 
-.swp
-.swa
+*.sw?
 
 build*
