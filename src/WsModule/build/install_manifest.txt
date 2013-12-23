@@ -1,0 +1,6 @@
+/usr/local/wittyshare/lib/libWsModule.so.1.0.1
+/usr/local/wittyshare/lib/libWsModule.so.1
+/usr/local/wittyshare/lib/libWsModule.so
+/usr/local/wittyshare/include/WsModule/WsModule.h
+/usr/share/cmake-2.8/Modules/gdcmake/WsModuleInclude.cmake
+/usr/share/cmake-2.8/Modules/gdcmake/Find_wsmodule.cmake
