@@ -10,8 +10,8 @@
 
 #include <boost/filesystem.hpp>
 
-#include <vmime/vmime.hpp>
-#include <vmime/platforms/posix/posixHandler.hpp>
+//#include <vmime/vmime.hpp>
+//#include <vmime/platforms/posix/posixHandler.hpp>
 
 #include <Wt/WLogger>
 #include <Wt/WText>
@@ -28,6 +28,8 @@
 #include <Wt/Dbo/backend/Sqlite3>
 
 #include <Wt/Auth/HashFunction>
+#include <Wt/Mail/Client>
+#include <Wt/Mail/Message>
 
 #include <gdcore/gdCore.h>
 #include <gdcore/gdLdap.h>
@@ -216,6 +218,21 @@ void WsNewsLetter::sendEmail(const std::string& email, const std::string& sSubje
 {
   std::string sSmtpServer = asString(option("smtpServer")).toUTF8();
   std::string sFrom       = asString(option("NLEmailFrom")).toUTF8();
+
+  Mail::Message message;
+  message.setFrom(Mail::Mailbox(sFrom));
+
+  if ( email.size() > 0 )
+    message.addRecipient(Mail::To, Mail::Mailbox(email));
+  message.setSubject(sSubject);
+  message.setBody("No html renderer in your mail client ");
+  message.addHtmlBody (sBodyPlain);
+  Mail::Client client;
+  client.connect(sSmtpServer);
+  client.send(message);
+  /*
+  std::string sSmtpServer = asString(option("smtpServer")).toUTF8();
+  std::string sFrom       = asString(option("NLEmailFrom")).toUTF8();
   vmime::platformDependant::setHandler<vmime::platforms::posix::posixHandler>();
   try {
     vmime::messageBuilder mb;
@@ -250,6 +267,7 @@ void WsNewsLetter::sendEmail(const std::string& email, const std::string& sSubje
     std::cout << "std::exception: " << e.what() << std::endl;
     //throw;
   }
+    */
 }
 
 void WsNewsLetter::registerValidEmail(const std::string& email)

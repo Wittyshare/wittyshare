@@ -12,7 +12,8 @@
 #include "gdwtcore/gdWFileView.h"
 
 #include <User/WsUser.h>
-#include <WsModule/WsModule.h>
+#include <Main/WsOption.h>
+//#include <WsModule/WsModule.h>
 
 class WsSiteMapItem : public Wt::WStandardItem {
 public :
