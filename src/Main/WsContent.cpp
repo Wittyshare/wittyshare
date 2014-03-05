@@ -300,7 +300,10 @@ void WsContent::selectWidget(std::string path)
       wApp->log("notice") << "WsContent::selectWidget : render a fragmented html file : " << sysPath;
     clear();
     WsApp->hideImages(false);
-    WText* wtext = new WText(fileContent);
+    WText* wtext = new WText();
+    // SD -> let fhtml have some iframe and js
+    wtext->setTextFormat(Wt::XHTMLUnsafeText);
+    wtext->setText(fileContent);    
     bool bUseLayout = false;
     if ( !bUseLayout ) {
       //setOverflow(WContainerWidget::OverflowAuto);
