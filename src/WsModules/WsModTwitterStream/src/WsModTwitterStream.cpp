@@ -24,7 +24,9 @@ extern "C" {
 
 WsTwitterStream::WsTwitterStream(WContainerWidget* parent)
   : WContainerWidget(parent)
-{ }
+{ 
+	addStyleClass("WsTwitterStream");
+}
 
 WsTwitterStream::~WsTwitterStream()
 { }
