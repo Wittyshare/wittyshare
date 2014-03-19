@@ -28,4 +28,5 @@ SUBDIRS (
   WsModTwitter
   WsModVideo
   WsModZip
+  WsModTwitterStream
 )
