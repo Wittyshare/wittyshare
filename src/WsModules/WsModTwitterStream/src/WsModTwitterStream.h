@@ -19,8 +19,6 @@ public :
   WsTwitterStream(Wt::WContainerWidget* parent = 0);
   ~WsTwitterStream();
   virtual void       load();
-public slots:
-  void execJs();
 
 };
 

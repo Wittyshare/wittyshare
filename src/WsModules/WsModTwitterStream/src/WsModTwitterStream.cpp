@@ -30,22 +30,19 @@ WsTwitterStream::~WsTwitterStream()
 { }
 
 
-void WsTwitterStream::execJs(){
-  std::string js = "!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\"://platform.twitter.com/widgets.js\";fjs.parentNode.insertBefore(js,fjs);}}(document,\"script\",\"twitter-wjs\");";
-  doJavaScript(js);
-}
-
 void WsTwitterStream::load()
 {
+  Wt::WApplication::instance()->require("http://platform.twitter.com/widgets.js");
   WContainerWidget::load();
   setId("twitterstream");
-  resize(WLength(25, WLength::Percentage), WLength(25, WLength::Percentage));
+  //resize(WLength(25, WLength::Percentage), WLength(25, WLength::Percentage));
   setOverflow(WContainerWidget::OverflowAuto);
   std::string html = "<a class=\"twitter-timeline\" data-dnt=\"true\" href=\"https://twitter.com/EUROFER_eu\" data-widget-id=\"441216909459984384\">Tweets by @EUROFER_eu</a>";
 
-  WTextArea* textField = new WTextArea(html);
+  WText* textField = new WText(this);
+  textField->setTextFormat(Wt::XHTMLUnsafeText);
+  textField->setText(html);
   addWidget(textField);
-  WTimer::singleShot(400, SLOT(this, WsTwitterStream::execJs));
 }
 
 WsModTwitterStream::WsModTwitterStream()
