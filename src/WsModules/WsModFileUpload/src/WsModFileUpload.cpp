@@ -45,14 +45,19 @@ WsFileUpload::WsFileUpload(WContainerWidget* parent)
 void WsFileUpload::load()
 {
   WContainerWidget::load();
-  addWidget(new WText("Upload a file with a maximum size of 8Mb"));
+  m_dialog = new WDialog();
+  m_dialog->setTitleBarEnabled(false);
+  m_dialog->contents()->addWidget(new WText("Upload a file with a maximum size of 8Mb"));
   m_pFU = new WFileUpload();
   m_pFU->setProgressBar(new WProgressBar());
   //  m_pFU->changed().connect(this, &WFileUpload::upload);
   m_pFU->changed().connect(this, &WsFileUpload::doUpload);
   m_pFU->uploaded().connect(this, &WsFileUpload::doUploaded);
   m_pFU->fileTooLarge().connect(this, &WsFileUpload::doFileTooLarge);
-  addWidget(m_pFU);
+  m_dialog->contents()->addWidget(m_pFU);
+  WPushButton* cancel = new WPushButton("Cancel ", m_dialog->contents());
+  cancel->clicked().connect(SLOT(this, WsFileUpload::doCancel));
+  m_dialog->show();
   WApplication::instance()->log("notice") << "WsFileUpload::load : end !";
 }
 
@@ -65,6 +70,14 @@ void WsFileUpload::doUpload()
 {
   wApp->log("notice") << " WsFileUpload::doUpload() : start upload";
   m_pFU->upload();
+}
+
+void WsFileUpload::doCancel(){
+    m_dialog->hide();
+    delete m_dialog;
+    string internal = wApp->internalPath();
+    boost::algorithm::replace_all(internal, "/FileUpload", "");
+    wApp->setInternalPath(internal, false);
 }
 
 void WsFileUpload::doUploaded()
@@ -90,6 +103,13 @@ void WsFileUpload::doUploaded()
     boost::algorithm::replace_first(sNewFile, m_sDocumentRoot, "/Edit");
     wApp->log("notice") << " WsFileUpload::doUploaded() set internalPath to : " << sNewFile;
     sleep(1);
+    std::string newNode = sNewFile;
+    boost::algorithm::replace_all(newNode, "/Edit", "");
+    boost::algorithm::replace_first(newNode, "//", "/");
+    boost::algorithm::replace_first(sNewFile, "//", "/");
+    pUser->createNode(newNode, WsUser::File);
+    m_dialog->hide();
+    delete m_dialog;
     wApp->setInternalPath(sNewFile, true);
   } catch  (boost::filesystem::filesystem_error& e) {
     wApp->log("ERROR") << " WsFileUpload::doUploaded() cannot move " << m_pFU->spoolFileName() << " to " << sNewFile << " error = " << e.what();

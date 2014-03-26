@@ -33,6 +33,7 @@ public slots :
   void                  doFileEnterPressed();
   void                  doEndFolderNew();
   void                  doEndFileNew();
+  void                  setNewInternalPath(std::string sub, std::string url, bool refresh=false);
 
 private :
   Wt::WDialog*          m_pDialog;

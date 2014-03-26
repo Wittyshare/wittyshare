@@ -62,7 +62,7 @@ void WsContentButtonsBar::doMenuEditPage(gdToolbarItem* pTbItem, WMouseEvent ev)
   std::string str =  pTbItem->url() + wApp->internalPath();
   if ( m_bDebug )
     wApp->log("notice") << " WsContentButtonsBar::doMenuEditPage " << str;
-  WsApp->setInternalPath(str, true);
+  setNewInternalPath(pTbItem->url(), wApp->internalPath(), true);
 }
 
 void WsContentButtonsBar::doFolderNew(gdToolbarItem* pTbItem, WMouseEvent ev)
@@ -150,7 +150,7 @@ void WsContentButtonsBar::doEndFolderNew()
     WsUser* pUser = WsApp->wsUser();
     pUser->createNode(path2Create, WsUser::Directory);
     //     sleep(40); // TODO : add a page reload
-    wApp->setInternalPath("/Edit" + path2Create, true);
+    setNewInternalPath("/Edit" , path2Create, true);
   }
   delete m_pDialog;
   m_pButOk   = 0;
@@ -168,12 +168,15 @@ void WsContentButtonsBar::doEndFileNew()
     std::string currentPath = WsApp->WsModules().pathWithoutPrefix(wApp->internalPath());
     boost::algorithm::replace_all(currentPath, "&amp;",  "&");
     std::string path2Create = currentPath + "/" + newName;
+    boost::algorithm::replace_all(path2Create, "//",  "/");
     // TODO : test internalPath is directory and if no, replace file name by newName
     if ( m_bDebug )
       wApp->log("notice") << " WsContentButtonsBar:: doEndFolderNew path2Create = " << path2Create;
     WsUser* pUser = WsApp->wsUser();
+    LOG(DEBUG)<<"WsContentButtonBar::doEndFileNew() : path2Create is : "<<path2Create;
+    LOG(DEBUG)<<"WsContentButtonBar::doEndFileNew() : currentPath is : "<<currentPath;
     pUser->createNode(path2Create, WsUser::File);
-    wApp->setInternalPath("/Edit" + path2Create, true);
+    setNewInternalPath("/Edit" , path2Create, true);
   }
   delete m_pDialog;
   m_pButOk   = 0;
@@ -206,6 +209,7 @@ void WsContentButtonsBar::doMBoxRespons(WMessageBox* pBox)
   std::string newPath = WsApp->WsModules().pathWithoutPrefix(wApp->internalPath());
   boost::algorithm::replace_all(newPath, "&amp;",  "&");
   pUser->deleteNode(newPath);
+  wApp->setInternalPath(path(newPath).parent_path().string(),true);
 }
 
 void WsContentButtonsBar::doFileUpload(gdToolbarItem* pTbItem, WMouseEvent ev)
@@ -224,7 +228,17 @@ void WsContentButtonsBar::doFileUpload(gdToolbarItem* pTbItem, WMouseEvent ev)
     return;
   }
   if ( pUser->isAdministrator() || pUser->isEditor() ) {
-    wApp->setInternalPath(pTbItem->url() + wApp->internalPath(), true);
+    setNewInternalPath(pTbItem->url() , wApp->internalPath(), true);
   }
 }
 
+void WsContentButtonsBar::setNewInternalPath(std::string sub, std::string url, bool refresh)
+{
+    if(sub == wApp->internalPath()){
+        sub = WsApp->WsModules().pathWithoutPrefix(sub);
+    }else {
+        boost::algorithm::replace_all(url, sub, "");
+    }
+    std::string newPath = sub+url;
+    wApp->setInternalPath(newPath, refresh);
+}

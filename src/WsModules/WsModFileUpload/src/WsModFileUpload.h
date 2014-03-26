@@ -32,9 +32,11 @@ public slots :
   void                doUpload();
   void                doFileTooLarge(int64_t nSize);
   void                doUploaded();
+  void                doCancel();
 
 private :
   Wt::WFileUpload*    m_pFU;
+  WDialog*            m_dialog;
 };
 
 class WsModFileUpload : public WsModule {

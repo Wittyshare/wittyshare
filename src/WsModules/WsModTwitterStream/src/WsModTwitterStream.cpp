@@ -34,7 +34,7 @@ WsTwitterStream::~WsTwitterStream()
 
 void WsTwitterStream::load()
 {
-  Wt::WApplication::instance()->require("http://platform.twitter.com/widgets.js");
+  Wt::WApplication::instance()->require("//platform.twitter.com/widgets.js");
   WContainerWidget::load();
   setId("twitterstream");
   //resize(WLength(25, WLength::Percentage), WLength(25, WLength::Percentage));
