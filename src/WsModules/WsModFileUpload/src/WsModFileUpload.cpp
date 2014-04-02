@@ -96,9 +96,23 @@ void WsFileUpload::doUploaded()
   else
     sNewFile = sCurPath + "/" + m_pFU->clientFileName().toUTF8();
   wApp->log("notice") << " WsFileUpload::doUploaded() current dir = " << sNewFile;
+  if(exists(sNewFile)){
+      LOG(DEBUG)<<"WsFileUpload::doUploaded(): sNewFile already exist "<<sNewFile;
+      m_dialog->hide();
+      StandardButton
+          result = WMessageBox::show("Error", "File already exist in current directory. Replace ?", Ok | Cancel);
+      if(result != Ok){
+          //delete m_pFU;
+          //delete m_dialog;
+          string internal = wApp->internalPath();
+          boost::algorithm::replace_all(internal, "/FileUpload", "");
+          wApp->setInternalPath(internal, false);
+          return;
+      }
+  }
   try {
-    boost::filesystem::copy_file(m_pFU->spoolFileName(), sNewFile, copy_option::overwrite_if_exists);
-    //  The remove is make by the Wt::WFileUpload class
+      boost::filesystem::copy_file(m_pFU->spoolFileName(), sNewFile, copy_option::overwrite_if_exists);
+      //  The remove is make by the Wt::WFileUpload class
     //    boost::filesystem::remove(m_pFU->spoolFileName());
     boost::algorithm::replace_first(sNewFile, m_sDocumentRoot, "/Edit");
     wApp->log("notice") << " WsFileUpload::doUploaded() set internalPath to : " << sNewFile;
