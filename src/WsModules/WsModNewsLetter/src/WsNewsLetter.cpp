@@ -202,13 +202,13 @@ void WsNewsLetter::multipleEmail(const std::string& email)
   std::string sBody       = "Dear web administrator,<br /><br /> pending a check of the email <b>"
                             + email
                             + "</b> I detect a multiple entry on our LDAP database,<br />"
-                            + " please check which correct action is required and process a manual respons to our client<br /><br />"
+                            + " please check which correct action is required and process a manual response to our client<br /><br />"
                             + "Thanks in advance.<br/><br/>"
                             + sSign;
   std::string sBodyPlain  = "Dear web administrator,\n\npending a check of the email *"
                             + email
                             + "* I detect a multiple entry on our LDAP database,\n"
-                            + " please check which correct action is required and process a manual respons to our client\n\n"
+                            + " please check which correct action is required and process a manual response to our client\n\n"
                             + "Thanks in advance.\n\n"
                             + sSign;
   sendEmail(sTo, sSubject, sBody, sBodyPlain);
@@ -228,7 +228,8 @@ void WsNewsLetter::sendEmail(const std::string& email, const std::string& sSubje
   message.setBody("No html renderer in your mail client ");
   message.addHtmlBody (sBodyPlain);
   Mail::Client client;
-  client.connect(sSmtpServer);
+  //client.connect(sSmtpServer);
+  client.connect("localhost");
   client.send(message);
   /*
   std::string sSmtpServer = asString(option("smtpServer")).toUTF8();
