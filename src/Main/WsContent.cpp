@@ -106,6 +106,7 @@ void WsContent::doEditPage(std::string path)
   setLayout(vbox);
   WsFormConfig* m_formConfig = new WsFormConfig(pNode, WsApp->WsModules());
   vbox->addWidget(m_formConfig, 0);
+  vbox->addWidget(WsApp->WsModules().module("WsModEditorUploader")->createContents());
   std::string     strExt(boost::filesystem::extension(sPathWithoutPrefix));
   if ( strExt == ".fhtml" ) {
     if ( !gdcore_isPathFile(sysPath) ) return;

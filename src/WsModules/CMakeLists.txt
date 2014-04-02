@@ -12,6 +12,7 @@ SUBDIRS (
   WsModBreadCrumb
   WsModDirectoryView2
   WsModFileUpload
+  WsModEditorUploader
   WsModFollowUs
   WsModGalleria
   WsModImages2

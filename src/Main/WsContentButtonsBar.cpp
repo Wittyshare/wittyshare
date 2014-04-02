@@ -62,7 +62,8 @@ void WsContentButtonsBar::doMenuEditPage(gdToolbarItem* pTbItem, WMouseEvent ev)
   std::string str =  pTbItem->url() + wApp->internalPath();
   if ( m_bDebug )
     wApp->log("notice") << " WsContentButtonsBar::doMenuEditPage " << str;
-  setNewInternalPath(pTbItem->url(), wApp->internalPath(), true);
+  //setNewInternalPath(pTbItem->url(), wApp->internalPath(), true);
+  setNewInternalPath(pTbItem->url(),  WsApp->WsModules().pathWithoutPrefix(wApp->internalPath()), true);
 }
 
 void WsContentButtonsBar::doFolderNew(gdToolbarItem* pTbItem, WMouseEvent ev)
