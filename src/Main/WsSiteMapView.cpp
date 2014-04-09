@@ -617,7 +617,7 @@ void WsSiteMapView::doDelete(Wt::StandardButton button)
   m_pModelView->removeRow(idx.row(), idx.parent());
   boost::filesystem::path newPath = str;
   m_selectedDirectory = newPath.parent_path().string();
-  if ( m_tbFlags & gdWFileView::tbUseLeftTree && type == '1' ) {
+  if ( m_tbFlags& gdWFileView::tbUseLeftTree && type == '1' ) {
     //treeMatchPath(str);
     pSet = m_pTVTree->selectedIndexes();
     if ( !pSet.empty() ) {

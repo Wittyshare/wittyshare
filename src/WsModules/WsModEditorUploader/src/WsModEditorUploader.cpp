@@ -44,20 +44,19 @@ WsEditorUploader::WsEditorUploader(WContainerWidget* parent)
 
 void WsEditorUploader::load()
 {
-  if(m_uploadOther != 0){
-      m_uploadOther->hide();
-      delete m_uploadOther;
-      m_uploadOther = 0;
+  if (m_uploadOther != 0) {
+    m_uploadOther->hide();
+    delete m_uploadOther;
+    m_uploadOther = 0;
   }
-  if(m_destPath != 0){
-      m_destPath->hide();
-      delete m_destPath;
+  if (m_destPath != 0) {
+    m_destPath->hide();
+    delete m_destPath;
   }
-
   WContainerWidget::load();
-  if(m_label != 0){
-      m_label->hide();
-      delete m_label;
+  if (m_label != 0) {
+    m_label->hide();
+    delete m_label;
   }
   m_label =  new WText("Upload a file with a maximum size of 8Mb");
   addWidget(m_label);
@@ -94,19 +93,18 @@ void WsEditorUploader::doUploaded()
   std::string sCurPath         = m_sDocumentRoot + sWithoutPrefix;
   wApp->log("notice") << " WsEditorUploader::doUploaded() current path = " << sCurPath;
   std::string sNewFile;
-
   if ( gdcore_isPathFile(sCurPath) )
     sNewFile = boost::filesystem::path(sCurPath).parent_path().string() + "/ws.res/" + m_pFU->clientFileName().toUTF8();
   else
     sNewFile = sCurPath + "/ws.res/" + m_pFU->clientFileName().toUTF8();
-  LOG(DEBUG)<<"WsEditorUploader::doUploaded(): sNewFile is "<<sNewFile;
-  if(exists(sNewFile)){
-      LOG(DEBUG)<<"WsEditorUploader::doUploaded(): sNewFile already exist "<<sNewFile;
-      if(m_uploadOther != 0){
-          m_uploadOther->hide();
-          delete m_uploadOther;
-          m_uploadOther = 0;
-      }
+  LOG(DEBUG) << "WsEditorUploader::doUploaded(): sNewFile is " << sNewFile;
+  if (exists(sNewFile)) {
+    LOG(DEBUG) << "WsEditorUploader::doUploaded(): sNewFile already exist " << sNewFile;
+    if (m_uploadOther != 0) {
+      m_uploadOther->hide();
+      delete m_uploadOther;
+      m_uploadOther = 0;
+    }
     m_pFU->hide();
     m_label->setText("File already exist");
     m_uploadOther = new WPushButton("Upload another file");
@@ -115,23 +113,22 @@ void WsEditorUploader::doUploaded()
     return;
   }
   //Check if the ws.res directory exists otherwise create it.
-  if(!exists(path(sNewFile).parent_path())){
-      LOG(DEBUG)<<"WsEditorUploader::doUploaded(): creating ws.res directory in "<<path(sNewFile).parent_path();
-      if(!create_directory(path(sNewFile).parent_path())){
-          if(m_uploadOther != 0){
-              m_uploadOther->hide();
-              delete m_uploadOther;
-              m_uploadOther = 0;
-          }
-          m_pFU->hide();
-          m_label->setText("Error: Could not create ws.dir directory");
-          m_uploadOther = new WPushButton("Upload another file");
-          m_uploadOther->clicked().connect(this, &WsEditorUploader::load);
-          addWidget(m_uploadOther);
-          return;
+  if (!exists(path(sNewFile).parent_path())) {
+    LOG(DEBUG) << "WsEditorUploader::doUploaded(): creating ws.res directory in " << path(sNewFile).parent_path();
+    if (!create_directory(path(sNewFile).parent_path())) {
+      if (m_uploadOther != 0) {
+        m_uploadOther->hide();
+        delete m_uploadOther;
+        m_uploadOther = 0;
       }
+      m_pFU->hide();
+      m_label->setText("Error: Could not create ws.dir directory");
+      m_uploadOther = new WPushButton("Upload another file");
+      m_uploadOther->clicked().connect(this, &WsEditorUploader::load);
+      addWidget(m_uploadOther);
+      return;
+    }
   }
-
   wApp->log("notice") << " WsEditorUploader::doUploaded() current dir = " << sNewFile;
   try {
     boost::filesystem::copy_file(m_pFU->spoolFileName(), sNewFile, copy_option::overwrite_if_exists);
@@ -152,8 +149,6 @@ void WsEditorUploader::doUploaded()
     m_uploadOther = new WPushButton("Upload another file");
     m_uploadOther->clicked().connect(this, &WsEditorUploader::load);
     addWidget(m_uploadOther);
-    
-
   } catch  (boost::filesystem::filesystem_error& e) {
     wApp->log("ERROR") << " WsEditorUploader::doUploaded() cannot move " << m_pFU->spoolFileName() << " to " << sNewFile << " error = " << e.what();
   }

@@ -13,7 +13,7 @@
 #include "WsOption.h"
 #include <gdcore/gdCore.h>
 
-    WsOption::WsOption(const std::string& attribute, const boost::any value)
+WsOption::WsOption(const std::string& attribute, const boost::any value)
   : m_sAttribute(attribute), m_value(value)
 { }
 

@@ -24,8 +24,8 @@ extern "C" {
 
 WsTwitterStream::WsTwitterStream(WContainerWidget* parent)
   : WContainerWidget(parent)
-{ 
-	addStyleClass("WsTwitterStream");
+{
+  addStyleClass("WsTwitterStream");
 }
 
 WsTwitterStream::~WsTwitterStream()
@@ -40,7 +40,6 @@ void WsTwitterStream::load()
   //resize(WLength(25, WLength::Percentage), WLength(25, WLength::Percentage));
   setOverflow(WContainerWidget::OverflowAuto);
   std::string html = "<a class=\"twitter-timeline\" data-dnt=\"true\" href=\"https://twitter.com/EUROFER_eu\" data-widget-id=\"441216909459984384\">Tweets by @EUROFER_eu</a>";
-
   WText* textField = new WText(this);
   textField->setTextFormat(Wt::XHTMLUnsafeText);
   textField->setText(html);

@@ -304,7 +304,7 @@ void WsContent::selectWidget(std::string path)
     WText* wtext = new WText();
     // SD -> let fhtml have some iframe and js
     wtext->setTextFormat(Wt::XHTMLUnsafeText);
-    wtext->setText(fileContent);    
+    wtext->setText(fileContent);
     bool bUseLayout = false;
     if ( !bUseLayout ) {
       //setOverflow(WContainerWidget::OverflowAuto);

@@ -54,7 +54,7 @@ void WsRSS::load()
 
 void WsRSS::buildRSS()
 {
-  LOG(DEBUG)<<"WsRSS::building RSS";
+  LOG(DEBUG) << "WsRSS::building RSS";
   WDateTime   dt(WDateTime::currentDateTime());
   std::string sDateTime    = dt.toString("yyyy-MM-dd hh:mm:ss").narrow();
   WsUser*     user         = WsApplication::wsInstance()->wsUser();
@@ -76,7 +76,7 @@ void WsRSS::buildRSS()
   std::string rootPath = asString(option("rootPath")).narrow();
   boost::algorithm::replace_all(rootPath, "&amp;",  "&");
   NodePtr root;
-  LOG(DEBUG)<<"WsRss :: rootPath is "<<rootPath;
+  LOG(DEBUG) << "WsRss :: rootPath is " << rootPath;
   if ( rootPath.size() < 1 )
     root = user->getAccessRoot();
   else {

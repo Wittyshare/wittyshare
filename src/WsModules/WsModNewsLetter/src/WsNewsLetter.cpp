@@ -218,10 +218,8 @@ void WsNewsLetter::sendEmail(const std::string& email, const std::string& sSubje
 {
   std::string sSmtpServer = asString(option("smtpServer")).toUTF8();
   std::string sFrom       = asString(option("NLEmailFrom")).toUTF8();
-
   Mail::Message message;
   message.setFrom(Mail::Mailbox(sFrom));
-
   if ( email.size() > 0 )
     message.addRecipient(Mail::To, Mail::Mailbox(email));
   message.setSubject(sSubject);

@@ -61,12 +61,12 @@ void WsContentButtonsBar::doMenuEditPage(gdToolbarItem* pTbItem, WMouseEvent ev)
 {
   std::string str =  pTbItem->url() + wApp->internalPath();
   std::string id = "";
-  LOG(DEBUG)<<"WsContentButtonsBar::doMenuEditPage() : Checking lock status";
+  LOG(DEBUG) << "WsContentButtonsBar::doMenuEditPage() : Checking lock status";
   int ret = WsApp->wsUser()->isLocked(wApp->internalPath(), id);
-  LOG(DEBUG)<<"WsContentButtonsBar::doMenuEditPage() : lock status is "<<ret<<" "<<id;
-  if(ret != 1){
-      WMessageBox::show("Warning", "The file is currently locked by \"" + id + "\". Please try again later.", Ok);
-      return;
+  LOG(DEBUG) << "WsContentButtonsBar::doMenuEditPage() : lock status is " << ret << " " << id;
+  if (ret != 1) {
+    WMessageBox::show("Warning", "The file is currently locked by \"" + id + "\". Please try again later.", Ok);
+    return;
   }
   if ( m_bDebug )
     wApp->log("notice") << " WsContentButtonsBar::doMenuEditPage " << str;
@@ -182,8 +182,8 @@ void WsContentButtonsBar::doEndFileNew()
     if ( m_bDebug )
       wApp->log("notice") << " WsContentButtonsBar:: doEndFolderNew path2Create = " << path2Create;
     WsUser* pUser = WsApp->wsUser();
-    LOG(DEBUG)<<"WsContentButtonBar::doEndFileNew() : path2Create is : "<<path2Create;
-    LOG(DEBUG)<<"WsContentButtonBar::doEndFileNew() : currentPath is : "<<currentPath;
+    LOG(DEBUG) << "WsContentButtonBar::doEndFileNew() : path2Create is : " << path2Create;
+    LOG(DEBUG) << "WsContentButtonBar::doEndFileNew() : currentPath is : " << currentPath;
     pUser->createNode(path2Create, WsUser::File);
     setNewInternalPath("/Edit" , path2Create, true);
   }
@@ -218,7 +218,7 @@ void WsContentButtonsBar::doMBoxRespons(WMessageBox* pBox)
   std::string newPath = WsApp->WsModules().pathWithoutPrefix(wApp->internalPath());
   boost::algorithm::replace_all(newPath, "&amp;",  "&");
   pUser->deleteNode(newPath);
-  wApp->setInternalPath(path(newPath).parent_path().string(),true);
+  wApp->setInternalPath(path(newPath).parent_path().string(), true);
 }
 
 void WsContentButtonsBar::doFileUpload(gdToolbarItem* pTbItem, WMouseEvent ev)
@@ -243,11 +243,11 @@ void WsContentButtonsBar::doFileUpload(gdToolbarItem* pTbItem, WMouseEvent ev)
 
 void WsContentButtonsBar::setNewInternalPath(std::string sub, std::string url, bool refresh)
 {
-    if(sub == wApp->internalPath()){
-        sub = WsApp->WsModules().pathWithoutPrefix(sub);
-    }else {
-        boost::algorithm::replace_all(url, sub, "");
-    }
-    std::string newPath = sub+url;
-    wApp->setInternalPath(newPath, refresh);
+  if (sub == wApp->internalPath()) {
+    sub = WsApp->WsModules().pathWithoutPrefix(sub);
+  } else {
+    boost::algorithm::replace_all(url, sub, "");
+  }
+  std::string newPath = sub + url;
+  wApp->setInternalPath(newPath, refresh);
 }
