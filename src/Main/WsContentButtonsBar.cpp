@@ -60,6 +60,14 @@ WsContentButtonsBar::~WsContentButtonsBar()
 void WsContentButtonsBar::doMenuEditPage(gdToolbarItem* pTbItem, WMouseEvent ev)
 {
   std::string str =  pTbItem->url() + wApp->internalPath();
+  std::string id = "";
+  LOG(DEBUG)<<"WsContentButtonsBar::doMenuEditPage() : Checking lock status";
+  int ret = WsApp->wsUser()->isLocked(wApp->internalPath(), id);
+  LOG(DEBUG)<<"WsContentButtonsBar::doMenuEditPage() : lock status is "<<ret<<" "<<id;
+  if(ret != 1){
+      WMessageBox::show("Warning", "The file is currently locked by \"" + id + "\". Please try again later.", Ok);
+      return;
+  }
   if ( m_bDebug )
     wApp->log("notice") << " WsContentButtonsBar::doMenuEditPage " << str;
   //setNewInternalPath(pTbItem->url(), wApp->internalPath(), true);

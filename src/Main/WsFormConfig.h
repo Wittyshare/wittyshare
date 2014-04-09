@@ -19,6 +19,7 @@
 #include <Wt/WDate>
 #include <Wt/WTime>
 #include <Wt/WDateTime>
+#include <Wt/WTimer>
 
 #include <gdwtcore/gdFHtmlEditor.h>
 
@@ -33,6 +34,9 @@ public :
 public slots :
   void               doCancel();
   void               doSave();
+  void               doLock();
+  void               doLockEnd();
+  void               doUpdateTimerLock();
 
 private :
   NodePtr    m_pNode;
@@ -52,6 +56,12 @@ private :
   Wt::WLineEdit*     m_pSortNumber;
   Wt::WCheckBox*     m_pCBInheritRights;
   Wt::WComboBox*     m_pCBBTemplates;
+  Wt::WPushButton*   m_pSave;
+  Wt::WPushButton*   m_pLock;
+  Wt::WTimer*        m_pTimer;
+  Wt::WTimer*        m_pTimerTick;
+  int                m_timeLockLeft;
+
 
   // Initial values
   Wt::WDateTime      m_wDateTime;

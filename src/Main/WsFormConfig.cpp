@@ -20,7 +20,7 @@
 using namespace Wt;
 
 WsFormConfig::WsFormConfig(NodePtr pNode, WsModulesLoader& rMl, WContainerWidget* parent)
-  : WContainerWidget(parent), m_pNode(pNode), m_ml(rMl), m_pAuthor(0), m_pShortDescEditor(0), m_pShortDescTextArea(0), m_pCBInMenu(0), m_pCBInView(0), m_pFhtmlEditor(0), m_pInitPage(0), m_bUseTextArea(true)
+  : WContainerWidget(parent), m_pNode(pNode), m_ml(rMl), m_pAuthor(0), m_pShortDescEditor(0), m_pShortDescTextArea(0), m_pCBInMenu(0), m_pCBInView(0), m_pFhtmlEditor(0), m_pInitPage(0), m_bUseTextArea(true),m_pSave(0),m_pLock(0),m_pTimer(0),m_pTimerTick(0), m_timeLockLeft(0)
 {
   //  if ( WsLayoutProperties::instance()->get("global", "by_object_stylesheet", "false") == "true" )
   if ( WString::tr("byObjectStyleSheet").narrow() == "true" )
@@ -139,9 +139,15 @@ WsFormConfig::WsFormConfig(NodePtr pNode, WsModulesLoader& rMl, WContainerWidget
   WPushButton* pButCancel = new WPushButton("Cancel");
   pButCancel->clicked().connect(SLOT(this, WsFormConfig::doCancel));
   addWidget(pButCancel);
-  WPushButton* pBut = new WPushButton("Save");
-  pBut->clicked().connect(SLOT(this, WsFormConfig::doSave));
-  addWidget(pBut);
+  m_pSave = new WPushButton("Save");
+  m_pSave->clicked().connect(SLOT(this, WsFormConfig::doSave));
+  if(!pNode->isDirectory()){
+      m_pLock = new WPushButton("Extend the lock");
+      m_pLock->clicked().connect(SLOT(this, WsFormConfig::doLock));
+      addWidget(m_pLock);
+      doLock();
+  }
+  addWidget(m_pSave);
   WContainerWidget* pCW = new WContainerWidget();
   pCW->addWidget(pTable);
   pCW->addWidget(new WText("<b>Short Description</b>"));
@@ -183,12 +189,70 @@ void WsFormConfig::setEditorFhtml(gdFHtmlEditor* pFhtmlEditor)
 }
 
 void WsFormConfig::doCancel()
+{  
+    WsApp->wsUser()->putLock(m_pNode->getPath().string());
+    wApp->setInternalPath(m_pNode->getPath().string(), true);
+}
+  
+void WsFormConfig::doLock()
 {
-  wApp->setInternalPath(m_pNode->getPath().string(), true);
+    m_timeLockLeft = WsApp->wsUser()->getLock(m_pNode->getPath().string());
+    if(m_timeLockLeft <= 0){
+        m_pSave->hide();
+        m_pLock->hide();
+        std::string id = "";
+        WsApp->wsUser()->isLocked(m_pNode->getPath().string(), id);
+        addWidget(new WText("<font color='red'>The file is currently locked by \""+id+"\". Please try again later</font>"));
+        return;
+    }
+    m_pLock->hide();
+    m_pSave->show();
+    if(m_pTimer){
+        m_pTimer->stop();
+        delete m_pTimer;
+    }
+    m_pTimer = new Wt::WTimer();
+    m_pTimer->setInterval(m_timeLockLeft*1000);
+    m_pTimer->timeout().connect(this, &WsFormConfig::doLockEnd);
+    m_pTimer->start();
+    doUpdateTimerLock();
+    if(m_pTimerTick != 0){
+        m_pTimerTick->stop();
+        delete m_pTimerTick;
+    }
+    m_pTimerTick = new Wt::WTimer();
+    m_pTimerTick->setInterval(60*1000);
+    m_pTimerTick->timeout().connect(this, &WsFormConfig::doUpdateTimerLock);
+    m_pTimerTick->start();
+}
+
+void WsFormConfig::doLockEnd()
+{
+    m_pTimer->stop();
+    m_pTimerTick->stop();
+    m_pSave->hide();
+    m_pLock->hide();
+    WMessageBox::show("Warning", "The file lock is released. Please copy your data and refresh the page to continue editing", Ok);
+}
+
+void WsFormConfig::doUpdateTimerLock()
+{
+    if(m_timeLockLeft < 600)
+        m_pLock->show();
+    std::string tl = boost::lexical_cast<std::string>(m_timeLockLeft/60);
+    m_pSave->setText("Save..("+tl+" min left)");
+    m_timeLockLeft -= 60;
 }
 
 void WsFormConfig::doSave()
 {
+  if(!m_pNode->isDirectory()){
+      m_timeLockLeft = WsApp->wsUser()->getLock(m_pNode->getPath().string());
+      if(m_timeLockLeft <= 0){
+          doLockEnd();
+          return;
+      }
+  }
   if ( !m_pName->validate() ) return;
   if ( !m_pSortNumber->validate() ) return;
   bool     bUpdated = false;
@@ -290,5 +354,7 @@ void WsFormConfig::doSave()
     pUser->renameNode(oldName, newName);
   //  wApp->setInternalPath(m_pNode->getPath().string(), true);
   wApp->setInternalPath(newName, true);
+
+  WsApp->wsUser()->putLock(m_pNode->getPath().string());
 }
 
