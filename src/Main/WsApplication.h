@@ -13,6 +13,7 @@
 
 #include <gdwtcore/gdApplication.h>
 #include <gdwtcore/gdToolbar.h>
+#include <gdwtcore/gdWLogon.h>
 
 #include "Main/WsModulesLoader.h"
 #include "Main/WsContentButtonsBar.h"
@@ -53,6 +54,7 @@ private :
   WsModulesLoader              m_ml;
   std::string                  m_sHomePage;
   std::string                  m_sTemplate;
+  gdWLogon*                     m_logon;
 
 };
 

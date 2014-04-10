@@ -22,7 +22,6 @@
 
 #include <gdcore/gdCore.h>
 
-#include <gdwtcore/gdWLogon.h>
 
 #include "Main/WsTemplate.h"
 #include "Main/WsTopBanner.h"
@@ -42,13 +41,16 @@ WsApplication::WsApplication(const WEnvironment& env)
   wApp->log("notice") << "WsApplication::WsApplication - Start load user with client IP : " << cip << " env ip " << environment().clientAddress();
   // TODO : Provisoire, si on est sur le reseau local on authentifie via ldap, sinon on considère que on est guest
   bool isPublicSite = WsGlobalProperties::instance()->get("global", "public_site", "false") == "true" ? true : false;
+  // On recherche le theme par dans la configuration, si rien n'est configuré on prend le theme polised par defaut.
+  wApp->setCssTheme(WsLayoutProperties::instance()->get("global", "css_theme", "polished"));
+  wApp->useStyleSheet(wApp->theme()->resourcesUrl() + "wittyshare/Css/wittyshare.css");
   if ( isPublicSite ) {
     bool enableLoginWindow = WsGlobalProperties::instance()->get("global", "login_window", "true") == "true" ? true : false;
     if (enableLoginWindow) {
       if ( cip.compare(0, 8, "192.168.") == 0 || cip.compare(0, 9, "127.0.0.1") == 0 ) {
-        gdWLogon* logOn = new gdWLogon(sUid, sPwd, root());
-        logOn->logonValidated().connect(SLOT(this, WsApplication::doEndDialogLogon));
-        logOn->load();
+        m_logon = new gdWLogon(sUid, sPwd, root());
+        m_logon->logonValidated().connect(SLOT(this, WsApplication::doEndDialogLogon));
+        m_logon->load();
       } else
         doEndDialogLogon("guest", "");
     } else
@@ -59,27 +61,19 @@ WsApplication::WsApplication(const WEnvironment& env)
 
 void WsApplication::doEndDialogLogon(std::string sUid, std::string pPassword)
 {
-  //  // TODO : Remove the 2 next lines
-  //  sUid = "angelique";
   wApp->log("notice") << "WsApplication::doEndDialogLogon() - logon : " << sUid;
   m_pUser = new WsUser(sUid, pPassword, environment().clientAddress());
   if ( !m_pUser || m_pUser->load() == FAILURE ) {
     wApp->log("ERROR") << "WsApplication::doEndDialogLogon - Cannot load user with uid : " << sUid;
     if ( m_pUser )
       delete m_pUser;
-    root()->clear();
-    root()->addWidget(new WText("Forbidden !"));
+    m_logon->setError("Invalid username or password");
     m_pUser = 0;
-    wApp->quit();
-    // TODO : page d'erreur
     return;
   }
   googleAnalyticsLogger("/");
   wApp->log("notice") << "WsApplication::doEndDialogLogon - End load user with uid : " << sUid;
   root()->addStyleClass("wsMainWin");
-  // On recherche le theme par dans la configuration, si rien n'est configuré on prend le theme polised par defaut.
-  wApp->setCssTheme(WsLayoutProperties::instance()->get("global", "css_theme", "polished"));
-  wApp->useStyleSheet(wApp->theme()->resourcesUrl() + "wittyshare/Css/wittyshare.css");
   wApp->log("notice") << "WsApplication::doEndDialogLogon - themes : " << wApp->theme()->resourcesUrl();
   // Chargement du fichier de resources .xml
   wApp->messageResourceBundle().use(wApp->docRoot() + wApp->resourcesUrl() + "wittyshare/Transl/wittyshare");
