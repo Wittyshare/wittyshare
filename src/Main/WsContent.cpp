@@ -219,7 +219,10 @@ void WsContent::setPath(std::string newPath)
   }
   if ( perms != GlobalConfig::Read && perms != GlobalConfig::ReadWrite) {
     clear();
-    addWidget(new WText("WsContent::setPath : URL not allowed : " + newPath));
+    if(perms == GlobalConfig::NotFound)
+        addWidget(new WText("WsContent::setPath : URL not found : " + newPath));
+    else 
+        addWidget(new WText("WsContent::setPath : URL not allowed : " + newPath));
     wApp->log("ALERT") <<  "WsContent::setPath() URL not allowed !!! "  << newPath << " perms = " << perms;
     // TODO : ERROR Page
     //wApp->quit();
