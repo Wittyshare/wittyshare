@@ -33,6 +33,7 @@
 #include "WsSearchView.h"
 #include "WsTemplate.h"
 #include "WsFormConfig.h"
+#include "WsErrorPage.h"
 
 using namespace Wt;
 
@@ -95,7 +96,7 @@ void WsContent::doEditPage(std::string path)
   WsUser*         pUser       = WsApp->wsUser();
   NodePtr         pNode       = pUser->getAccessRoot()->eatPath(sPathWithoutPrefix);
   if (!pNode.get() ) {
-    wApp->log("notice") << "WsContent::doEditPage receive an empty node, not allowed ? " << sPathWithoutPrefix;
+    addWidget(new WsErrorPage(WsErrorPage::Error, path, pUser, "Returned node is null")); 
     return;
   }
   if ( m_bLogContent )
@@ -220,12 +221,9 @@ void WsContent::setPath(std::string newPath)
   if ( perms != GlobalConfig::Read && perms != GlobalConfig::ReadWrite) {
     clear();
     if(perms == GlobalConfig::NotFound)
-        addWidget(new WText("WsContent::setPath : URL not found : " + newPath));
+        addWidget(new WsErrorPage(WsErrorPage::NotFound, p.string(), pUser)); 
     else 
-        addWidget(new WText("WsContent::setPath : URL not allowed : " + newPath));
-    wApp->log("ALERT") <<  "WsContent::setPath() URL not allowed !!! "  << newPath << " perms = " << perms;
-    // TODO : ERROR Page
-    //wApp->quit();
+        addWidget(new WsErrorPage(WsErrorPage::Forbidden, p.string(), pUser)); 
     return;
   }
   if ( newPath == "/Logo" ) {
@@ -249,11 +247,22 @@ void WsContent::setPath(std::string newPath)
   }
   if ( newPath.compare(0, 8, "/SiteMap") == 0)
     return siteMapChanged(newPath);
+  //Edit and upload only available when editor
   if ( newPath.compare(0, 5, "/Edit") == 0)
-    return doEditPage(newPath);
-  if ( newPath.compare(0, 11, "/FileUpload") == 0)
-    return buildFileUpload(newPath);
-  selectWidget(newPath);
+      if(perms == GlobalConfig::ReadWrite)
+          return doEditPage(newPath);
+      else {
+          addWidget(new WsErrorPage(WsErrorPage::Forbidden, newPath, pUser));
+          return;
+      }
+  if ( newPath.compare(0, 11, "/FileUpload") == 0 )
+      if(perms == GlobalConfig::ReadWrite )
+          return buildFileUpload(newPath);
+      else {
+          addWidget(new WsErrorPage(WsErrorPage::Forbidden, newPath, pUser));
+          return;
+          }
+      selectWidget(newPath);
 }
 
 void WsContent::selectWidget(std::string path)
@@ -267,7 +276,6 @@ void WsContent::selectWidget(std::string path)
   std::string             fileContent;
   if ( m_bLogContent )
     wApp->log("notice") << "WsContent::selectWidget :  path = " << path << " name = " << strName << " extension = " << strExt << " system path = " << sysPath;
-  //     setOverflow(WContainerWidget::OverflowHidden);
   // This extension is mainly created for allowing text in a image without a link
   if ( strExt == ".nolink" ) return;
   // load the file in memory for some file format
@@ -286,8 +294,7 @@ void WsContent::selectWidget(std::string path)
     if ( m_bLogContent )
       wApp->log("notice") << "WsContent::selectWidget : render a html file : " << sysPath;
     if ( !m_bAllowHtmlRendering ) {
-      wApp->log("notice") << "WsContent::selectWidget : render a html file is not allowed" << sysPath;
-      addWidget(new WText("WsContent::selectWidget : rendering a html file is not allowed : " + path));
+      addWidget(new WsErrorPage(WsErrorPage::Error, path, 0, "Rendering a html file is not allowed")); 
       return;
     }
     clear();

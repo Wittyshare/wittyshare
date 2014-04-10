@@ -27,6 +27,7 @@
 #include "Main/WsTopBanner.h"
 #include "Main/WsBottomBanner.h"
 #include "Main/WsFunctionnalities.h"
+#include "WsErrorPage.h"
 #include <ConfigManager/WsLayoutProperties.h>
 
 using namespace Wt;
@@ -61,7 +62,6 @@ WsApplication::WsApplication(const WEnvironment& env)
 
 void WsApplication::doEndDialogLogon(std::string sUid, std::string pPassword)
 {
-  wApp->log("notice") << "WsApplication::doEndDialogLogon() - logon : " << sUid;
   m_pUser = new WsUser(sUid, pPassword, environment().clientAddress());
   if ( !m_pUser || m_pUser->load() == FAILURE ) {
     wApp->log("ERROR") << "WsApplication::doEndDialogLogon - Cannot load user with uid : " << sUid;
@@ -72,9 +72,7 @@ void WsApplication::doEndDialogLogon(std::string sUid, std::string pPassword)
     return;
   }
   googleAnalyticsLogger("/");
-  wApp->log("notice") << "WsApplication::doEndDialogLogon - End load user with uid : " << sUid;
   root()->addStyleClass("wsMainWin");
-  wApp->log("notice") << "WsApplication::doEndDialogLogon - themes : " << wApp->theme()->resourcesUrl();
   // Chargement du fichier de resources .xml
   wApp->messageResourceBundle().use(wApp->docRoot() + wApp->resourcesUrl() + "wittyshare/Transl/wittyshare");
   // Chargement du fichier de configuration .xml
@@ -84,17 +82,13 @@ void WsApplication::doEndDialogLogon(std::string sUid, std::string pPassword)
   m_ml.load(); // Load all modules
   std::string    oldInternalPath = wApp->internalPath();
   boost::algorithm::replace_all(oldInternalPath, "&amp;",  "&");
-  wApp->log("notice") <<  "WsApplication::doEndDialogLogon() internalPath = "  << oldInternalPath;
   oldInternalPath = m_ml.checkPath(oldInternalPath);
-  wApp->log("notice") <<  "WsApplication::doEndDialogLogon() internalPath after module check path= "  << oldInternalPath;
   std::string truePath(WsModules().pathWithoutPrefix(oldInternalPath));
-  wApp->log("notice") <<  "WsApplication::doEndDialogLogon() internalPath without prefix = "  << truePath;
   if ( oldInternalPath != "/" && oldInternalPath.size() > 0 ) {
     // TODO : Boucler par module
-    wApp->log("notice") <<  "WsApplication::doEndDialogLogon() checking perms in "  << oldInternalPath;
     int perms = m_pUser->getPermissions(truePath);
     if ( perms == GlobalConfig::NotLogged ) {
-      wApp->log("ALERT") <<  "WsApplication::doEndDialogLogon() USer is not logged " ;
+      wApp->log("ALERT") <<  "WsApplication::doEndDialogLogon() User is not logged " ;
       wApp->redirect("/");
     }
     if ( perms != GlobalConfig::Read && perms != GlobalConfig::ReadWrite)  {
@@ -113,10 +107,8 @@ void WsApplication::doEndDialogLogon(std::string sUid, std::string pPassword)
   m_sHomePage = m_pUser->getHomePage();
   if ( WsLayoutProperties::instance()->get("global", "use_template", "true") == "true") {
     if ( oldInternalPath.size() > 1 ) {
-      wApp->log("notice") << "WsApplication::doEndDialogLogon() - Using template : " << oldInternalPath;
       setTemplate(oldInternalPath);
     } else {
-      wApp->log("notice") << "WsApplication::doEndDialogLogon() - Using template : " <<  m_sHomePage;
       setTemplate(m_sHomePage);
     }
   } else {
@@ -128,9 +120,7 @@ void WsApplication::doEndDialogLogon(std::string sUid, std::string pPassword)
       m_pContent->setPath(oldInternalPath);
     else
       m_pContent->setPath(m_sHomePage);
-    wApp->log("notice") << "WsApplication::doEndDialogLogon - Not using template : " << m_sHomePage;
     if ( WsLayoutProperties::instance()->get("global", "use_topbanner", "true") == "true" ) {
-      LOG(DEBUG) << "WsApplication :: Use top banner ";
       WsTopBanner* pTB = new WsTopBanner();
       vbox->addWidget(pTB, 0);
     }
@@ -143,7 +133,6 @@ void WsApplication::doEndDialogLogon(std::string sUid, std::string pPassword)
            }
     */
     if ( WsLayoutProperties::instance()->get("global", "use_fonctionnalities", "true") == "true" ) {
-      LOG(DEBUG) << "WsApplication :: Use funcionnalities";
       vbox->addWidget(new WsFunctionnalities());
     }
     if (WsLayoutProperties::instance()->get("global", "use_ws_images", "false") == "true") {
@@ -155,7 +144,6 @@ void WsApplication::doEndDialogLogon(std::string sUid, std::string pPassword)
     } else
       vbox->addWidget(pContent, 1);
     if (WsLayoutProperties::instance()->get("global", "use_bottombanner", "true") == "true") {
-      LOG(DEBUG) << "WsApplication :: Use bottom banner";
       vbox->addWidget(new WsBottomBanner(WsLayoutProperties::instance()->get("global", "bottombanner_text", "")), 0);
     }
     root()->setLayout(vbox);
@@ -202,8 +190,7 @@ void WsApplication::setTemplate(const std::string& sPageOrig)
     NodePtr rootNode = m_pUser->getAccessRoot();
     if ( !rootNode.get() ) {
       wApp->log("ALERT") <<  "WsApplication::setTemplate() root node is null !! ";
-      // TODO : ERROR Page
-      wApp->quit();
+      root()->addWidget(new WsErrorPage(WsErrorPage::Error, sPage,m_pUser, "WsApplication::setTemplate() root node is null")); 
       return;
     }
     NodePtr curNode = rootNode.get()->eatPath(truePath);
@@ -227,10 +214,8 @@ void WsApplication::setTemplate(const std::string& sPageOrig)
     if ( sPage.compare(0,  5, "/Logo" ) == 0 )    sTemplate = "GhFullWidth.tpl"; // cui-ci aussi
     if ( sPage.compare(0,  7, "/Search" ) == 0 )  sTemplate = "stdContact.tpl"; // cui-ci aussi
     if ( pNode.get() ) {
-      wApp->log("notice") << "WsApplication::setTemplate() - Using template : " << sTemplate << " with home page : " << sPage;
       sPath = sPage;
     } else {
-      wApp->log("notice") << "WsApplication::setTemplate() - Using template : " << sTemplate << ", with home page : " << m_sHomePage;
       sPath = m_sHomePage;
     }
     if ( sTemplate != m_sTemplate ) {

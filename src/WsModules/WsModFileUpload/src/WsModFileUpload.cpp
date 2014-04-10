@@ -39,18 +39,18 @@ extern "C" {
 WsFileUpload::WsFileUpload(WContainerWidget* parent)
   : WContainerWidget(parent), m_pFU(0)
 {
-  addStyleClass("WsFileUpload");
+ // addStyleClass("WsFileUpload");
 }
 
 void WsFileUpload::load()
 {
   WContainerWidget::load();
   m_dialog = new WDialog();
+  m_dialog->addStyleClass("WsFileUpload");
   m_dialog->setTitleBarEnabled(false);
   m_dialog->contents()->addWidget(new WText("Upload a file with a maximum size of 8Mb"));
   m_pFU = new WFileUpload();
   m_pFU->setProgressBar(new WProgressBar());
-  //  m_pFU->changed().connect(this, &WFileUpload::upload);
   m_pFU->changed().connect(this, &WsFileUpload::doUpload);
   m_pFU->uploaded().connect(this, &WsFileUpload::doUploaded);
   m_pFU->fileTooLarge().connect(this, &WsFileUpload::doFileTooLarge);

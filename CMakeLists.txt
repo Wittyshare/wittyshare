@@ -31,6 +31,7 @@ SET (APPNAME_SRCS
     src/Main/WsTemplate.cpp
     src/Main/WsApplication.cpp
     src/Main/WsOption.cpp
+    src/Main/WsErrorPage.cpp
     )
 
 INCLUDE(${CMAKE_ROOT}/Modules/gdcmake/Find_gdwtcore.cmake)

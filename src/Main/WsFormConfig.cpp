@@ -16,6 +16,7 @@
 
 #include "WsApplication.h"
 #include "WsFormConfig.h"
+#include "WsErrorPage.h"
 
 using namespace Wt;
 
@@ -42,6 +43,12 @@ WsFormConfig::WsFormConfig(NodePtr pNode, WsModulesLoader& rMl, WContainerWidget
        -
   */
   WsUser* pUser = WsApp->wsUser();
+  //Test if user has write access
+  if(pUser->getPermissions(pNode->getPath().string()) != GlobalConfig::ReadWrite)
+  {
+    addWidget(new WsErrorPage(WsErrorPage::Forbidden,pNode->getPath().string(), pUser));
+    return;
+  }
   WTable* pTable = new WTable();
   int     iRow   = 0;
   // Les dates sont sockées en string format time_t TODO : add try/catch
