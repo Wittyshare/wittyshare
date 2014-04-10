@@ -80,7 +80,7 @@ void WsMenu::doLoadCurPath()
       return;
     }
   }
-  NodePtr startNode = pUser->getMenuRoot();
+  NodePtr startNode = pUser->getAccessRoot();
   if ( !startNode.get() ) {
     wApp->log("notice") << "WsMenu::doLoadCurPath - startNode  = " << startNode;
     return;
@@ -117,7 +117,8 @@ void WsMenu::loadMenu(NodePtr pNodeParent, WMenu* menuParent)
     NodePtr curNode = *it;
     if ( asString(option("debug")) == "true" )
       wApp->log("notice") << "WsMenu::loadMenu - curNode path = " << curNode.get()->getPath().string();
-    createMenu(curNode, menuParent);
+    if(curNode.get()->getDisplayInMenu())
+        createMenu(curNode, menuParent);
   }
 }
 
@@ -224,6 +225,8 @@ void WsMenu::loadPopupMenu(NodePtr pNodeParent, Wt::WPopupMenu* menuParent)
     wApp->log("notice") << "WsMenu::loadPopupMenu- dirNode getDirectories size = " << dirNode.size() << " path " << pNodeParent->getPath().string();
   for (std::vector<NodePtr>::iterator it = dirNode.begin(); it != dirNode.end(); ++it) {
     NodePtr curNode = *it;
+    if(!curNode.get()->getDisplayInMenu())
+        continue;
     if ( asString(option("debug")) == "true" )
       wApp->log("notice") << "WsMenu::loadPopupMenu - curNode path = " << curNode.get()->getPath().string();
     bool popupAllowed = (curNode.get()->getProperties().get()->get("global", "allow_popup", "true") == "true" ? true : false);
