@@ -201,14 +201,14 @@ void WsContent::setPath(std::string newPath)
     sPathWithoutPrefix = p.parent_path().string();
   }
   int perms = pUser->getPermissions(sPathWithoutPrefix);
-  if ( perms == GlobalConfig::NotLogged ) {
+  if ( perms == ErrorCode::NotLogged ) {
       wApp->log("ALERT") <<  "WsApplication::doEndDialogLogon() User is not logged " ;
       wApp->redirect("/");
     return;
   }
   if ( perms != GlobalConfig::Read && perms != GlobalConfig::ReadWrite) {
     clear();
-    if(perms == GlobalConfig::NotFound)
+    if(perms == ErrorCode::NotFound)
         addWidget(new WsErrorPage(WsErrorPage::NotFound, p.string(), pUser)); 
     else 
         addWidget(new WsErrorPage(WsErrorPage::Forbidden, p.string(), pUser)); 

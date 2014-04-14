@@ -87,7 +87,7 @@ void WsApplication::doEndDialogLogon(std::string sUid, std::string pPassword)
   if ( oldInternalPath != "/" && oldInternalPath.size() > 0 ) {
     // TODO : Boucler par module
     int perms = m_pUser->getPermissions(truePath);
-    if ( perms == GlobalConfig::NotLogged ) {
+    if ( perms == ErrorCode::NotLogged ) {
       wApp->log("ALERT") <<  "WsApplication::doEndDialogLogon() User is not logged " ;
       wApp->redirect("/");
     }

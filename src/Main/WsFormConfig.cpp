@@ -342,12 +342,8 @@ void WsFormConfig::doSave()
     pUser->saveProperties(m_pNode->getProperties().get(), m_pNode->getPath().string());
   if ( m_pFhtmlEditor ) {
     wApp->log("notice") << "WsFormConfig::doSave() fhtml file = " << m_pNode->getFullPath(); // << " text = " <<  m_pFhtmlEditor->text().toUTF8();
-    FILE* hData = fopen(m_pNode->getFullPath().c_str(), "w");
-    if ( hData ) {
-      fprintf(hData, "%s", m_pFhtmlEditor->text().toUTF8().c_str());
-      fclose(hData);
-    } else
-      wApp->log("notice") << "WsFormConfig::doSave() cannot open " << m_pNode->getFullPath();
+    if (! pUser->writeFile(m_pNode->getPath().string(), m_pFhtmlEditor->text().toUTF8().c_str()))
+        wApp->log("notice") << "WsFormConfig::doSave() cannot open " << m_pNode->getFullPath();
   }
   std::string oldName = m_pNode->getPath().string();
   std::string newName = m_pNode->getPath().parent_path().string();
