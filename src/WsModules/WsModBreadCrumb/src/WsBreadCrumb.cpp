@@ -21,7 +21,6 @@ WsBreadCrumb::breadCrump::breadCrump()
 
 WsBreadCrumb::breadCrump::~breadCrump()
 {
-  wApp->log("notice") << "breadCrumb::~breadCrumb() deleting title = " << title;
 }
 
 
@@ -43,8 +42,6 @@ WsBreadCrumb::~WsBreadCrumb()
 void WsBreadCrumb::load()
 {
   WContainerWidget::load();
-  if ( asString(option("debug")) == "true" )
-    m_bDebug = true;
   doPathChanged(wApp->internalPath());
   wApp->internalPathChanged().connect(SLOT(this, WsBreadCrumb::doPathChanged));
 }
@@ -68,8 +65,6 @@ void WsBreadCrumb::doPathChanged(std::string newPathOrig)
   m_vBreadCrumb.push_back(bc);
   std::string sWithoutPrefix  = newPath; //WsApp->WsModules().pathWithoutPrefix(newPath);
   std::string sPath           = "/";
-  if ( m_bDebug )
-    wApp->log("notice") << "WsBreadCrumb::doPathChanged - path = " << newPath << " sWithoutPrefix = " << sWithoutPrefix << " bcp->path = " << bc.path;
   boost::filesystem::path myPath(sWithoutPrefix);
   if ( myPath.string() != sPath )
     while ( myPath.has_parent_path() ) {
@@ -90,18 +85,13 @@ void WsBreadCrumb::doPathChanged(std::string newPathOrig)
   for (int ibc = 0; ibc < m_vBreadCrumb.size(); ++ibc) {
     WMenuItem* pItem =  new WMenuItem(m_vBreadCrumb[ibc].title);
     //    pItem->setLink(WLink(WLink::InternalPath, m_vBreadCrumb[ibc].path));
-    wApp->log("notice") << "WsBreadCrumb::doPathChanged - add link = " << m_vBreadCrumb[ibc].path;
     m_pMenu->addItem(pItem);
   }
 }
 
 void WsBreadCrumb::onBreadCrumbSelected(WMenuItem* pMenuItem)
 {
-  if ( m_bDebug )
-    wApp->log("notice") << "WsBreadCrumb::onBreadCrumbSelected - index path = " << m_vBreadCrumb[m_pMenu->currentIndex()].path;
   if ( m_vBreadCrumb[m_pMenu->currentIndex()].path.empty() ) return;
-  if ( m_bDebug )
-    wApp->log("notice") << "WsBreadCrumb::onBreadCrumbSelected - index path not empty = " << m_vBreadCrumb[m_pMenu->currentIndex()].path;
   if (
     m_vBreadCrumb[m_pMenu->currentIndex()].node &&
     m_vBreadCrumb[m_pMenu->currentIndex()].node->isDirectory() &&

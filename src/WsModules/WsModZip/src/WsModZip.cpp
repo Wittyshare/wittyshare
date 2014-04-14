@@ -43,7 +43,6 @@ void WsZipEditorWidget::load()
   WsUser* user = WsApplication::wsInstance()->wsUser();
   string path = WApplication::instance()->internalPath();
   path = WsApplication::wsInstance()->WsModules().pathWithoutPrefix(path);
-  LOG(DEBUG) << "WsZipEditorWidget::load() " << path;
   std::string prop(user->getProperty(path, WSMODZIP, ALLOW_ZIP, "true"));
   m_cb = new WCheckBox("Allow in zip ? ");
   if ( prop == "true" ) {
@@ -60,7 +59,6 @@ bool WsZipEditorWidget::saveEditor() const
   WsUser* user = WsApplication::wsInstance()->wsUser();
   string path = WApplication::instance()->internalPath();
   path = WsApplication::wsInstance()->WsModules().pathWithoutPrefix(path);
-  LOG(DEBUG) << "WsModZip ::saveEditor " << path;
   if ( m_cb->checkState() != m_bState )
     if ( user->saveProperty(path, WSMODZIP, ALLOW_ZIP, m_cb->checkState() ? "true" : "false") == FAILURE ) return false;
   return true;
@@ -69,18 +67,15 @@ bool WsZipEditorWidget::saveEditor() const
 WsModZip::WsModZip()
   : WsModule()
 {
-  LOG(DEBUG) << "WsModZip :: end ctor of WsModZip !";
   m_errmsg = "Could not create archive";
 }
 
 WsModZip::~WsModZip()
 {
-  LOG(DEBUG) << "WsModZip :: end dtor of WsModZip !";
 }
 
 WWidget* WsModZip::createContentsMenuBar(WContainerWidget* parent) const
 {
-  LOG(DEBUG) << "WsModZip::createContentsMenuBar ";
   WsModZip* self =  const_cast<WsModZip*>(this);
   self->buildMenuBar();
   return 0;
@@ -117,7 +112,6 @@ WWidget* WsModZip::buildMenuBar()
 
 void WsModZip::handleZipClick()
 {
-  LOG(DEBUG) << "WsModZip :: Creating widget";
   m_dialog = new WDialog();
   m_dialog->setTitleBarEnabled(false);
   m_dialog->rejectWhenEscapePressed();
@@ -145,7 +139,6 @@ void WsModZip::handleZipClick()
 
 void WsModZip::appendToZip(const string& path)
 {
-  LOG(DEBUG) << "WsModZip :: Adding path to archive : " << path;
   m_paths.push_back(path);
 }
 
@@ -186,7 +179,6 @@ void WsModZip::handleReject()
 
 int WsModZip::handleFiles(int t)
 {
-  LOG(DEBUG) << "WsModZip :: Handling only files";
   /* Get the WsUser class */
   WsUser* user = WsApplication::wsInstance()->wsUser();
   NodePtr accessTree = user->getAccessRoot();
@@ -197,13 +189,11 @@ int WsModZip::handleFiles(int t)
   /* Get the internalPath */
   string path = WApplication::instance()->internalPath();
   path = WsApplication::wsInstance()->WsModules().pathWithoutPrefix(path);
-  LOG(DEBUG) << "WsModZip :: Archiving " << path;
   /* Get the directory contents */
   NodePtr tmp = accessTree.get()->eatPath(path);
   if (!tmp)
     return FAILURE;
   vector<NodePtr> contents =   tmp.get()->getAll();
-  LOG(DEBUG) << "WsModZip :: Dir contents size :" << contents.size();
   vector<NodePtr>::iterator it;
   int size = contents.size();
   int i = 0;
@@ -211,7 +201,6 @@ int WsModZip::handleFiles(int t)
   for (it = contents.begin(); it != contents.end(); ++it) {
     /* If it's a file */
     if ((*it).get()->isRegularFile()) {
-      LOG(DEBUG) << "WsModZip :: Typeid is file for " << (*it)->getFullPath().string();
       /* Check if we can include it in zip (read config) */
       if ((*it).get()->getProperties().get()->get(WSMODZIP, ALLOW_ZIP, "true") == "true")
         if ((*it).get()->getSize() > 0)
@@ -224,24 +213,20 @@ int WsModZip::handleFiles(int t)
 
 int WsModZip::handleAll(int t)
 {
-  LOG(DEBUG) << "WsModZip :: Handling everything";
   /* Get WsUser class */
   WsUser* user = WsApplication::wsInstance()->wsUser();
   NodePtr accessTree = user->getAccessRoot();
   if (!accessTree.get()) {
-    LOG(ERROR) << "WsModZip::handleFiles() AccessRoot is NULL";
     return FAILURE;
   }
   /* Get the internalPath */
   string path = WApplication::instance()->internalPath();
   path = WsApplication::wsInstance()->WsModules().pathWithoutPrefix(path);
-  LOG(DEBUG) << "WsModZip :: Archiving " << path;
   /* Get the directory contents */
   NodePtr tmp = accessTree.get()->eatPath(path);
   if (!tmp.get())
     return FAILURE;
   vector<NodePtr> contents =   tmp.get()->getAll();
-  LOG(DEBUG) << "WsModZip :: Dir contents size :" << contents.size();
   vector<NodePtr>::iterator it;
   int size = contents.size();
   int i = 0;
@@ -249,7 +234,6 @@ int WsModZip::handleAll(int t)
   for (it = contents.begin(); it != contents.end(); ++it) {
     /* If it's a file */
     if ((*it)->isRegularFile()) {
-      LOG(DEBUG) << "WsModZip :: Typeid is file for " << (*it).get()->getFullPath().string();
       /* Check if we can add it to zip */
       if ((*it).get()->getProperties().get()->get(WSMODZIP, ALLOW_ZIP, "true") == "true")
         /* If we can add it to zip and file size > 0, add it */
@@ -257,7 +241,6 @@ int WsModZip::handleAll(int t)
           appendToZip((*it)->getPath().string());
     } else {
       /* It's a directory */
-      LOG(DEBUG) << "WsModZip :: Typeid is dir for " << (*it).get()->getFullPath().string();
       /* Check if we can add it to zip */
       if ((*it).get()->getProperties().get()->get(WSMODZIP, ALLOW_ZIP_ALL, "true") == "true" && (*it).get()->getProperties().get()->get(WSMODZIP, ALLOW_ZIP, "true") == "true")
         /* Append the directory */
@@ -269,7 +252,6 @@ int WsModZip::handleAll(int t)
 
 void WsModZip::appendSubDir(const string& path)
 {
-  LOG(DEBUG) << "WsModZip :: Appending sub dir of " << path;
   /* Get the WsUser class */
   WsUser* user = WsApplication::wsInstance()->wsUser();
   NodePtr accessTree = user->getAccessRoot();
@@ -278,14 +260,12 @@ void WsModZip::appendSubDir(const string& path)
     return;
   }
   /* Get the internalPath */
-  LOG(DEBUG) << "WsModZip :: Archiving " << path;
   /* Get the directory contents */
   NodePtr tmp = accessTree.get()->eatPath(path);
   if (!tmp.get())
     return;
   vector<NodePtr> contents =   tmp.get()->getAll();
   /* Get contents of directory */
-  LOG(DEBUG) << "WsModZip :: Got dir contents for " << path;
   vector<NodePtr>::iterator it;
   /* Iterate over files and folder */
   for (it = contents.begin(); it != contents.end(); ++it) {
@@ -307,7 +287,6 @@ std::string WsModZip::description() const
 
 int WsModZip::writeAndCloseZip(int format)
 {
-  LOG(DEBUG) << "WsModZip :: Generating archive file with " << m_paths.size() << " files";
   char buff[16384];
   struct archive* a;
   struct archive* disk;
@@ -320,22 +299,18 @@ int WsModZip::writeAndCloseZip(int format)
   string rootPath = user->getRootPath();
   const char* temp = rootPath.c_str();
   char* newDir = new char[rootPath.size() + 1]();
-  LOG(DEBUG) << "WsModZip :: Root path is " << rootPath;
   strncpy(newDir, temp, rootPath.size());
   newDir[rootPath.size()] = '\0';
   /* Do a chdir to zip files correctly */
-  LOG(DEBUG) << "WsModZip :: Changing current dir name from " << currentDir << " to " << newDir;
   if (chdir(newDir) != 0) {
     LOG(ERROR) << "WsModZip :: Could not chdir to " << newDir;
     return -1;
   }
-  LOG(DEBUG) << "WsModZip ::  Current dir name : " << get_current_dir_name();
   string ext;
   /* Create a new archive */
   a = archive_write_new();
   /* Check format wanted */
   if (format == TAR) {
-    LOG(DEBUG) << "WsModZip :: Archive format will be tar.bz2";
     /* Set flags TAR */
     archive_write_set_compression_compress(a);
     archive_write_set_compression_bzip2(a);
@@ -344,7 +319,6 @@ int WsModZip::writeAndCloseZip(int format)
   } else if (format == ZIP) {
     /* Set flags zIP */
     archive_write_set_compression_compress(a);
-    LOG(DEBUG) << "WsModZip :: Archive format will be zip";
     archive_write_set_format_zip(a);
     ext = ".zip";
   } else {
@@ -353,7 +327,6 @@ int WsModZip::writeAndCloseZip(int format)
   }
   /* Get TMP directory of user */
   string filenameTmp = wsApp->getUserTmpPath() + string(basename(tmpnam(NULL))) + ext;
-  LOG(DEBUG) << "WsModZip :: Archive file name will be " << filenameTmp.c_str();
   /* Open archive */
   archive_write_open_file(a, filenameTmp.c_str());
   disk = archive_read_disk_new();
@@ -367,14 +340,11 @@ int WsModZip::writeAndCloseZip(int format)
   for (int i = 0; i < m_paths.size(); ++i) {
     struct archive* disk = archive_read_disk_new();
     int r;
-    LOG(DEBUG) << "WsModZip :: Adding file " << m_paths[i];
     string str = m_paths[i];
     /* remove the starting / */
     if (m_paths[i][0] == '/') {
       str = m_paths[i].substr(1);
-      LOG(DEBUG) << "WsModZip :: m_paths starts with /";
     }
-    LOG(DEBUG) << "Reading file " << str.c_str();
     r = archive_read_disk_open(disk, str.c_str());
     if (r != ARCHIVE_OK) {
       LOG(ERROR) << "WsModZip :: Cannot read file";
@@ -405,7 +375,6 @@ int WsModZip::writeAndCloseZip(int format)
         fd = open(archive_entry_sourcepath(entry), O_RDONLY);
         len = read(fd, buff, sizeof(buff));
         while (len > 0) {
-          LOG(DEBUG) << "WsModZip :: writing data of length " << sizeof(buff);
           archive_write_data(a, buff, len);
           len = read(fd, buff, sizeof(buff));
         }
@@ -421,7 +390,6 @@ int WsModZip::writeAndCloseZip(int format)
   archive_write_free(a);
   if (chdir(currentDir) != 0)
     LOG(DEBUG) << "WsModZip :: Could not chdir to " << currentDir;
-  LOG(DEBUG) << "WsModZip :: Archive ready for Download";
   boost::replace_all(filenameTmp, wsApp->docRoot(), "");
   WApplication::instance()->redirect(filenameTmp);
   m_dialog->hide();

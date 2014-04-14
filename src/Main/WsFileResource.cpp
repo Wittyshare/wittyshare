@@ -20,7 +20,6 @@ WsFileResource::WsFileResource(const std::string& strFile, WObject* parent)
   : WFileResource(parent), m_bDelete(false), m_strFile(strFile)
 {
   std::string m_strExtension = boost::filesystem::extension(m_strFile);
-  //  wApp->log("notice") << "fileResource::fileResource : extension = " << m_strExtension;
   if ( m_strExtension == ".pdf" )
     setMimeType("application/pdf");
   if ( m_strExtension == ".rss" )

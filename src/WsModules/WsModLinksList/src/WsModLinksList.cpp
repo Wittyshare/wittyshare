@@ -54,17 +54,11 @@ WsLinksList::WsLinksList(WContainerWidget* parent)
 
 WsLinksList::~WsLinksList()
 {
-  if ( asString(option("debug")) == "true" )
-    LOG(DEBUG) << "WsLinksList::~WsLinksList() !";
 }
 
 void WsLinksList::load()
 {
   Wt::WContainerWidget::load();
-  if ( asString(option("debug")) == "true" )
-    Wt::WApplication::instance()->log("notice") << "WsLinksList::load()";
-  if ( asString(option("debug")) == "true" )
-    outOptions("WsLinksList::load()");
   std::string sClass = asString(option("class")).toUTF8();
   if ( sClass.size() > 0 )
     addStyleClass(sClass);
@@ -92,15 +86,14 @@ void WsLinksList::load()
   if ( rootPath.size() < 1 ) rootPath = path;
   NodePtr root = pUser->getAccessRoot();
   if ( !root ) {
-    LOG(DEBUG) << "WsLinksList::load() cannot get root !";
+    LOG(ERROR) << "WsLinksList::load() cannot get root !";
     return;
   }
   NodePtr startNode = root->eatPath(rootPath);
   if (startNode.get() == 0) {
-    LOG(DEBUG) << "WsLinksList::load() cannot eatPath !" << rootPath;
+    LOG(ERROR) << "WsLinksList::load() cannot eatPath !" << rootPath;
     return;
   }
-  LOG(DEBUG) << "WsLinksList::load() start on rootPath = " << rootPath;
   std::vector<NodePtr> dirNode          = startNode.get()->getFiles();
   for (std::vector<NodePtr>::iterator it = dirNode.begin(); it != dirNode.end(); ++it) {
     NodePtr curNode = *it;
@@ -111,13 +104,10 @@ void WsLinksList::load()
            ) ) continue;
     if ( curNode.get()->isDirectory() )        continue;
     std::string pngPath =  curNode.get()->getPath().string();
-    LOG(DEBUG) << "WsLinksList::load() node !" << pngPath;
     boost::filesystem::path pdfFile = pngPath;
     pdfFile.replace_extension(".pdf");
     std::string sFileObject = pdfFile.string();
     if ( sFileObject.size() < 1 ) continue;
-    if ( asString(option("debug")) == "true" )
-      wApp->log("notice") << "sLinksList::load() pdf/zip file = " << sFileObject;
     std::string     linkType = "InternalPath";
     std::string     sUrl;
     NodePtr pNode       = root->eatPath(sFileObject);
@@ -172,13 +162,10 @@ void WsLinksList::load()
 WsModLinksList::WsModLinksList()
   : WsModule()
 {
-  WApplication::instance()->log("notice") << "end ctor of WsModLinksList !";
 }
 
 WsModLinksList::~WsModLinksList()
 {
-  if ( asString(option("debug")) == "true" ) // Todo test is now crash if WsOptions is deleted before ?
-    LOG(DEBUG) << "WsModLinksList::~WsModLinksList() !";
 }
 
 WWidget* WsModLinksList::createContentsMenuBar(WContainerWidget* parent) const
@@ -190,8 +177,6 @@ WWidget* WsModLinksList::createContents(WContainerWidget* parent) const
 {
   WsLinksList* pLinksList = new WsLinksList(parent);
   pLinksList->setOptions(options());
-  if ( asString(option("debug")) == "true" )
-    pLinksList->outOptions("WsModLinksList::createContents()");
   return pLinksList;
 }
 

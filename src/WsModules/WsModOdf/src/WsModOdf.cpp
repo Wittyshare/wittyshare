@@ -48,16 +48,13 @@ void WsOdf::load()
   resize(WLength(100, WLength::Percentage), WLength(100, WLength::Percentage));
   setOverflow(WContainerWidget::OverflowAuto);
   std::string  p1 = Wt::WApplication::instance()->internalPath();
-  WApplication::instance()->log("notice") << "WsOdf::load() internalPath : " << p1; // /about/wt.odt
   //std::string  p = "/demo_site/about/wt.odt";
   // TODO : check security level
   std::string  p(m_sDiffPath + p1);
-  WApplication::instance()->log("notice") << "diffPath : " << p;
   if ( p.size() > 0 ) {
     std::string javaScript =  "var odfelement = document.getElementById('odf'); odfcanvas = new odf.OdfCanvas(odfelement); odfcanvas.load('";
     javaScript += p;
     javaScript += "')";
-    WApplication::instance()->log("notice") << "WsOdf::load() execute this javascript : " << javaScript;
     WApplication::instance()->doJavaScript(javaScript);
   }
 }
@@ -76,12 +73,10 @@ WsModOdf::WsModOdf()
   WApplication::instance()->useStyleSheet(WApplication::instance()->resourcesUrl() + "webodf/webodf.css");
   // Add the required javascript file
   WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "webodf/webodf.js", "webodf");
-  LOG(DEBUG) << "WsModOdf::WsModOdf() !";
 }
 
 WsModOdf::~WsModOdf()
 {
-  LOG(DEBUG) << "WsModOdf::~WsModOdf() !";
 }
 
 WWidget* WsModOdf::createContentsMenuBar(WContainerWidget* parent) const

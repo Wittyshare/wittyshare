@@ -214,7 +214,6 @@ void WsLatestNews2::onViewSelectionChanged()
   if ( pSet.empty() ) return;
   WModelIndex    idx = *it;
   std::string str = asString(idx.data(UserRole)).toUTF8();
-  wApp->log("notice") <<  "WsLatestNews2::onViewSelectionChanged() : path = " << str;
   wApp->setInternalPath(str, true);
 }
 

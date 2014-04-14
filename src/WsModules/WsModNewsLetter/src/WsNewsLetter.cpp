@@ -47,15 +47,11 @@
 WsNewsLetter::WsNewsLetter(WContainerWidget* parent)
   : WContainerWidget(parent), m_pLineEdit(0), m_pButSubscribe(0), sqlite3_(0)
 {
-  if ( asString(option("debug")) == "true" )
-    LOG(DEBUG) << "WsNewsLetter::WsNewsLetter() !";
   addStyleClass("WsNewsLetter");
 }
 
 WsNewsLetter::~WsNewsLetter()
 {
-  if ( asString(option("debug")) == "true" )
-    LOG(DEBUG) << "WsNewsLetter::~WsNewsLetter() !";
   if ( sqlite3_ )
     delete sqlite3_;
   sqlite3_ = 0;
@@ -64,8 +60,6 @@ WsNewsLetter::~WsNewsLetter()
 void WsNewsLetter::load()
 {
   WContainerWidget::load();
-  if ( asString(option("debug")) == "true" )
-    WApplication::instance()->log("notice") << "WsNewsLetter::load()";
   initDB();
   WText* pTitle = new WText(asString(option("title")).toUTF8());
   pTitle->addStyleClass("WsTitle");
@@ -98,14 +92,12 @@ void WsNewsLetter::initDB()
   //Init DB
   // Implemantation from EMWEB
   std::string dbPath = asString(option("dbNewsLetter")).toUTF8();
-  wApp->log("notice") << "WsNewsLetter::initDB() sqlite3 backend db = " << dbPath;
   sqlite3_ =  new dbo::backend::Sqlite3(dbPath);
   sqlite3_->setProperty("show-queries", "true");
   session_.setConnection(*sqlite3_);
   session_.mapClass<EmailToken>("user");
   try {
     session_.createTables(); //Use it to create the DB.
-    wApp->log("notice") << "WsNewsLetter::initDB() sqlite3 createTables and database";
   } catch (std::exception& e) {
     wApp->log("notice") << "WsNewsLetter::initDB() sqlite3 createTables and database : using existing database error = " << e.what();
   }
@@ -136,6 +128,7 @@ WsNewsLetter::emailAvailability WsNewsLetter::isEmailExistInLdap(const std::stri
   else {
     std::string error = "WsNewsLetter::isEmailExistInLdap() Ldap try not ok !";
     WApplication::instance()->log("notice") << error;
+    //TODO Change to ERROR class
     wApp->setInternalPath("/ws/Errors/ServerTempUnavailable.fhtml", true);
     return ldapError;
   }
@@ -156,6 +149,7 @@ WsNewsLetter::emailAvailability WsNewsLetter::isEmailExistInLdap(const std::stri
   if ( !m_cLdap.GetInfo(cFilter, cWitchAttrs, cEntries) && m_cLdap.GetLastError() != CLdapErrNoEntries ) {
     std::string notice = "WsNewsLetter::isEmailExistInLdap() cannot get ldap info or no entries!";
     WApplication::instance()->log("notice") << notice;
+    //TODO Change to ERROR class
     wApp->setInternalPath("/ws/Errors/ServerTempUnavailable.fhtml", true);
     return ldapError;
   }
@@ -179,8 +173,6 @@ WsNewsLetter::emailAvailability WsNewsLetter::isEmailExistInLdap(const std::stri
     if ( cEntries[0]->Attrs[nAttr]->Attr == "mail" )      sEmail     = cEntries[0]->Attrs[nAttr]->Values[0]->ToStr();
     if ( cEntries[0]->Attrs[nAttr]->Attr == "dn" )        sDn        = cEntries[0]->Attrs[nAttr]->Values[0]->ToStr();
   }
-  std::string notice = "WsNewsLetter::isEmailExistInLdap() match givenName, " + sGivenName + " sn, " + sSN + " email, " + sEmail + " dn, " + sDn;
-  WApplication::instance()->log("notice") << notice;
   gdCLdapEntry        entry;
   entry.Dn = sDn;
   gdCLdapAttribute   updateAttr("EurListsMember");
@@ -282,7 +274,6 @@ void WsNewsLetter::emailNotInLdap(const std::string& email)
   bool bMatchEmail = false;
   {
     dbo::Transaction transaction(session_);
-    wApp->log("notice") << "WsNewsLetter::emailNotInLdap() email = " << email << " find it !";
     EmailTokens eTokens = session_.find<EmailToken>().where("email = ?").bind(email);
     if ( eTokens.size() != 0 ) {
       std::string text = "Email is already in db, nothing to do !";
@@ -296,6 +287,7 @@ void WsNewsLetter::emailNotInLdap(const std::string& email)
       eToken->currentDate = WDate::currentDate();
       eToken->registered  = 0;
       session_.add(eToken);
+      //TODO Add error Page
       wApp->log("notice") << "WsNewsLetter::emailNotInLdap() email does not exist in database " << email << " token = " << random << " hash = " << hash;
     }
   }
@@ -317,11 +309,9 @@ void WsNewsLetter::emailNotInLdap(const std::string& email)
 
 std::string WsNewsLetter::checkPath(const std::string& path)
 {
-  wApp->log("notice") << "WsNewsLetter::checkPath() currentPath = " << path;
   if ( path.compare(0, 22, "/Newsletter/Subscribe/") != 0 ) return path;
   std::string token = path;
   boost::algorithm::replace_all(token, "/Newsletter/Subscribe/", "");
-  wApp->log("notice") << "WsNewsLetter::checkPath() token is " << token;
   initDB();
   Auth::SHA1HashFunction hf;
   std::string hash = hf.compute(token, std::string());

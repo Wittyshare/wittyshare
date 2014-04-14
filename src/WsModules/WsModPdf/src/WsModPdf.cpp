@@ -11,7 +11,6 @@ using namespace Wt;
 extern "C" {
   void WsModPdfInit(void)
   {
-    LOG(DEBUG) << "WsModPdf :: Preparing required libraries : libwt.so";
     void* hndl = dlopen("libwt.so", RTLD_NOW | RTLD_GLOBAL);
     if ( hndl == NULL ) {
       LOG(ERROR) << "WsModPdf :: Cannot load libwt.so shared library! " << dlerror();
@@ -39,10 +38,8 @@ void WsPdf::load()
   resize(WLength(100, WLength::Percentage), WLength(100, WLength::Percentage));
   setOverflow(WContainerWidget::OverflowAuto);
   std::string  p1 = Wt::WApplication::instance()->internalPath();
-  WApplication::instance()->log("notice") << "WsPdf::load() internalPath : " << p1; // /about/wt.pdf
   //std::string  p = "/demo_site/about/wt.pdf";
   std::string  p(m_sDiffPath + p1);
-  WApplication::instance()->log("notice") << "WsPdf::load() diffPath : " << p;
   if ( p.size() > 0 ) {
     std::string javaScript = "\
             PDFJS.workerSrc='" + WApplication::instance()->resourcesUrl() + "webpdf/pdf.js';\
@@ -55,7 +52,6 @@ void WsPdf::load()
                 canvas.height = page.height * scale;\
                 canvas.width  = page.width  * scale;\
                 })";
-    WApplication::instance()->log("notice") << "WsPdf::load() execute this javascript : " << javaScript;
     WApplication::instance()->doJavaScript(javaScript);
   }
 }
@@ -69,12 +65,10 @@ WsModPdf::WsModPdf()
 {
   // Add the required javascript file
   WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "webpdf/pdf.js");
-  LOG(DEBUG) << "end ctor of WsModPdf !";
 }
 
 WsModPdf::~WsModPdf()
 {
-  LOG(DEBUG) << "end dtor of WsModPdf !";
 }
 
 WWidget* WsModPdf::createContentsMenuBar(WContainerWidget* parent) const

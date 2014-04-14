@@ -54,12 +54,10 @@ WsModLatestNews2::WsModLatestNews2()
   : WsModule()
 {
   wApp->messageResourceBundle().use(wApp->docRoot() + wApp->resourcesUrl() + "WsModLatestNews2/Transl/WsModLatestNews2");
-  LOG(DEBUG) << "WsModLatestNews2 :: end ctor of WsModLatestNews2 !";
 }
 
 WsModLatestNews2::~WsModLatestNews2()
 {
-  LOG(DEBUG) << "WsModLatestNews2 :: end dtor of WsModLatestNews2 !";
 }
 
 WWidget* WsModLatestNews2::createContentsMenuBar(WContainerWidget* parent) const

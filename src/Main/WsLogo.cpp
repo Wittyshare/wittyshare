@@ -19,7 +19,6 @@ using namespace Wt;
 WsLogo::WsLogo(WContainerWidget* parent)
   : WImage(parent)
 {
-  wApp->log("notice") << "WsLogo::WsLogo CTOR";
   std::string curImgUrl(wApp->theme()->resourcesUrl() + "wittyshare/Images/logo.png");
   setImageRef(curImgUrl);
   gdImageProperties imgProp = gdImage_size(wApp->docRoot() + curImgUrl);

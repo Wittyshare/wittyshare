@@ -76,17 +76,14 @@ WsDirectoryView2::WsDirectoryView2(WContainerWidget* parent)
   : WTableView(parent)
 {
   addStyleClass("WsDirectoryView2");
-  LOG(DEBUG) << "WsDirectoryView2 :: end ctor of WsDirectoryView2 !";
 }
 
 WsDirectoryView2::~WsDirectoryView2()
 {
-  LOG(DEBUG) << "WsDirectoryView2 :: end dtor of WsDirectoryView2 !";
 }
 
 void WsDirectoryView2::load()
 {
-  LOG(DEBUG) << "WsDirectoryView2 :: load !";
   WTableView::load();
   WStandardItemModel* pModelView = new WStandardItemModel(0, 4, this);
   pModelView->setHeaderData(0, WString::tr("WsDirectoryView2-Name"));
@@ -99,8 +96,6 @@ void WsDirectoryView2::load()
   if ( path.size() < 1 )
     path = WsApplication::wsInstance()->internalPath();
   std::string sWithoutPrefix   = WsApp->WsModules().pathWithoutPrefix(path);
-  if ( asString(option("debug")) == "true" )
-    wApp->log("notice") << "WsDirectoryView2::load() : rootPath = " << path;
   //std::vector<NodePtr> vDirContent = user->getDirContents(path);
   NodePtr accessTree = user->getAccessRoot();
   if (!accessTree.get()) {
@@ -194,7 +189,6 @@ void WsDirectoryView2::load()
 
 void WsDirectoryView2::onViewSelectionChanged()
 {
-  wApp->log("notice") <<  "WsDirectoryView2::onViewSelectionChanged() : entering ...";
   WModelIndexSet pSet = selectedIndexes();
   WModelIndexSet::iterator it = pSet.begin();
   if ( pSet.empty() ) return;
@@ -204,7 +198,6 @@ void WsDirectoryView2::onViewSelectionChanged()
     boost::algorithm::replace_first(str, "1", "");
   else
     boost::algorithm::replace_first(str, "2", "");
-  wApp->log("notice") <<  "WsDirectoryView2::onViewSelectionChanged() : path = " << str;
   wApp->setInternalPath(str, true);
 }
 
@@ -220,12 +213,10 @@ WsModDirectoryView2::WsModDirectoryView2()
   : WsModule()
 {
   wApp->messageResourceBundle().use(wApp->docRoot() + wApp->resourcesUrl() + "WsModDirectoryView2/Transl/WsModDirectoryView2");
-  LOG(DEBUG) << "WsModDirectoryView2 :: end ctor of WsModDirectoryView2 !";
 }
 
 WsModDirectoryView2::~WsModDirectoryView2()
 {
-  LOG(DEBUG) << "WsModDirectoryView2 :: end dtor of WsModDirectoryView2 !";
 }
 
 WWidget* WsModDirectoryView2::createContentsMenuBar(WContainerWidget* parent) const
@@ -236,11 +227,7 @@ WWidget* WsModDirectoryView2::createContentsMenuBar(WContainerWidget* parent) co
 WWidget* WsModDirectoryView2::createContents(WContainerWidget* parent) const
 {
   WsDirectoryView2* dirView = new WsDirectoryView2(parent);
-  if ( asString(option("debug")) == "true" )
-    wApp->log("notice") <<  "WsModDirectoryView2::createContents() : prepare options ";
   dirView->setOptions(options());
-  if ( asString(option("debug")) == "true" )
-    dirView->outOptions("WsModDirectoryView2::createContents()");
   return dirView;
 }
 

@@ -43,12 +43,10 @@ WsImagesGallery::WsImagesGallery(WContainerWidget* parent)
   : WContainerWidget(parent), m_nStartImage(0), m_nMaxImages(3), m_pTimerThumb(0), m_pTimerImage(0), m_nCurrentImage(0), m_pImages2(0), m_pImages2Text(0), m_cwThumb(0)
 {
   addStyleClass("WsImagesGallery");
-  LOG(DEBUG) << "WsImagesGallery::WsImagesGallery() !";
 }
 
 WsImagesGallery::~WsImagesGallery()
 {
-  LOG(DEBUG) << "WsImagesGallery::~WsImagesGallery() !";
 }
 
 void WsImagesGallery::load()
@@ -56,7 +54,6 @@ void WsImagesGallery::load()
   WContainerWidget::load();
   WsUser*                       pUser            = WsApp->wsUser();
   std::string                   sWithoutPrefix   = WsApp->WsModules().pathWithoutPrefix(WsApp->internalPath());
-  wApp->log("notice") << "WsImagesGallery::load() sWithoutPrefix = " << sWithoutPrefix;
   NodePtr   startNode = pUser->getAccessRoot();
   if ( !startNode ) return;
   NodePtr curNode    = startNode.get()->eatPath(sWithoutPrefix);
@@ -81,7 +78,6 @@ void WsImagesGallery::load()
     m_pTimerThumb->timeout().connect(SLOT(this, WsImagesGallery::doTimeoutThumb));
     m_pTimerThumb->start();
   }
-  WApplication::instance()->log("notice") << "WsImagesGallery::load : end !";
 }
 
 void WsImagesGallery::buildVector()
@@ -91,7 +87,6 @@ void WsImagesGallery::buildVector()
   if ( imgPath.size() < 1 ) return;
   WsUser*                       pUser            = WsApp->wsUser();
   std::string                   sWithoutPrefix   = WsApp->WsModules().pathWithoutPrefix(WsApp->internalPath());
-  wApp->log("notice") << "WsImagesGallery::buildVector() imgPath = " << imgPath << "sWithoutPrefix = " << sWithoutPrefix;
   boost::filesystem::directory_iterator end_itr;
   try {
     for (boost::filesystem::directory_iterator itr_dir(pUser->getRootPath() + imgPath); itr_dir != end_itr; ++itr_dir) {
@@ -122,7 +117,6 @@ void WsImagesGallery::buildThumbnails()
     //    int status = gdImage_resizeImage(m_vImages[curImg], urlSized, sResize); // TODO : Use Blob
     if ( status ) {
       wApp->log("notice") << "WsImagesGallery::buildThumbnails() : cannot resize to Blob = " << urlSized << " status = " << status << " url source " << m_vImages[curImg];
-      //wApp->log("notice") << "WsImagesGallery::buildThumbnails() : cannot resize to urlSized = " << urlSized << " status = " << status << " url source " << m_vImages[curImg];
       continue;
     }
     m_vThumbnails.push_back(rBlob);
@@ -215,8 +209,6 @@ void WsImagesGallery::renderImage()
   m_pImages2->setOption("useImageTitle", std::string("false"));
   m_pImages2->setOption("imagesPath", imgPath);
   m_pImages2->setOption("textWidget", std::string("false"));
-  if ( asString(option("debug")) == "true" )
-    m_pImages2->outOptions("WsImagesGallery::renderImage())");
   m_pImages2->build();
   m_pImages2Text = new WText(m_pImages2->text());
   m_pImages2Text->addStyleClass("WsImagesGalleryText");
@@ -278,12 +270,10 @@ void WsImagesGallery::doNext(Wt::WPushButton* pButton)
 WsModImagesGallery::WsModImagesGallery()
   : WsModule()
 {
-  LOG(DEBUG) << "WsModImagesGallery::WsModImagesGallery() !";
 }
 
 WsModImagesGallery::~WsModImagesGallery()
 {
-  LOG(DEBUG) << "WsModImagesGallery::~WsModImagesGallery() !";
 }
 
 WWidget* WsModImagesGallery::createContentsMenuBar(WContainerWidget* parent) const

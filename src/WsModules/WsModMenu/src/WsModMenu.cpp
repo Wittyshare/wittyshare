@@ -35,12 +35,10 @@ extern "C" {
 WsModMenu::WsModMenu()
   : WsModule()
 {
-  LOG(DEBUG) << "WsModMenu::WsModMenu() !";
 }
 
 WsModMenu::~WsModMenu()
 {
-  LOG(DEBUG) << "WsModMenu::~WsModMenu() !";
 }
 
 WWidget* WsModMenu::createContentsMenuBar(WContainerWidget* parent) const
@@ -52,8 +50,6 @@ WWidget* WsModMenu::createContents(WContainerWidget* parent) const
 {
   WsMenu* pMenu = new WsMenu("/", parent);
   pMenu->setOptions(options());
-  if ( asString(option("debug")) == "true" )
-    pMenu->outOptions("WsModMenu::createContents()");
   return pMenu;
 }
 

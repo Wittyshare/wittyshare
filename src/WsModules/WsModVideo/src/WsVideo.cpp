@@ -18,12 +18,10 @@ WsVideo::WsVideo(WContainerWidget* parent)
   : WContainerWidget(parent)
 {
   addStyleClass("WsVideo");
-  LOG(DEBUG) << "end ctor of WsVideo !";
 }
 
 WsVideo::~WsVideo()
 {
-  LOG(DEBUG) << "end dtor of WsVideo !";
 }
 
 void WsVideo::load()
@@ -37,7 +35,6 @@ void WsVideo::load()
   if ( !curNode ) return;
   std::string m_sDocumentRoot  = pUser->getRootPath(); // /var/www/demo_site
   std::string videoFile          = m_sDocumentRoot + wApp->internalPath();
-  LOG(DEBUG) << "WsVideo::load file = " << videoFile << " iPath = " << wApp->internalPath();
   WText* pText = new WText(curNode.get()->getDisplayName(true));
   pText->addStyleClass("WsTitle");
   addWidget(pText);
@@ -48,7 +45,6 @@ void WsVideo::load()
     video->addSource(Wt::WLink(videoFile));
     //video->addSource(Wt::WLink(wApp->internalPath());
     video->resize(640, 360);
-    LOG(DEBUG) << "end WsVideo load .ogv or .mp4 ! videoFile = " << videoFile;
     return;
   }
   if ( extension == ".m4v" ) {
@@ -57,7 +53,6 @@ void WsVideo::load()
     player->addSource(Wt::WMediaPlayer::M4V, Wt::WLink(videoFile));
     //player->addSource(Wt::WMediaPlayer::M4V, Wt::WLink(wApp->internalPath()));
     player->setVideoSize(640, 360);
-    LOG(DEBUG) << "end WsVideo load .m4v ! videoFile = " << videoFile;;
     return;
   }
   if ( extension == ".youtube" ) {
@@ -71,8 +66,6 @@ void WsVideo::load()
     WFlashObject* flash = new WFlashObject(sUrl, this);
     flash->setFlashParameter("allowFullScreen", "true");
     flash->resize(640, 360);
-    LOG(DEBUG) << "end WsVideo load .youtube ! url = [" << sUrl << "]";
   }
-  LOG(DEBUG) << "end WsVideo load!";
 }
 

@@ -47,7 +47,6 @@ WsContent::WsContent(WContainerWidget* parent)
   if (WsLayoutProperties::instance()->get("global", "log_content", "false") == "true")
     m_bLogContent = true;
   m_searchPath = WsLayoutProperties::instance()->get("global", "search_path", "/Search");
-  wApp->log("notice") <<  "WsContent::WsContent() m_searchPath = " << m_searchPath;
   if (WsLayoutProperties::instance()->get("global", "allow_html_rendering", "false") == "true")
     m_bAllowHtmlRendering = true;
   WsUser* pUser           = WsApp->wsUser();
@@ -71,8 +70,6 @@ void WsContent::clear()
 void WsContent::load()
 {
   WContainerWidget::load();
-  if ( m_bLogContent )
-    wApp->log("notice") <<  "WsContent::load() end";
 }
 
 WsContent::~WsContent()
@@ -99,8 +96,6 @@ void WsContent::doEditPage(std::string path)
     addWidget(new WsErrorPage(WsErrorPage::Error, path, pUser, "Returned node is null")); 
     return;
   }
-  if ( m_bLogContent )
-    wApp->log("notice") << "WsContent::doEditPage receive a correct node ! " << sPathWithoutPrefix;
   clear();
   setOverflow(WContainerWidget::OverflowAuto);
   WVBoxLayout* vbox = new WVBoxLayout();
@@ -141,8 +136,6 @@ void WsContent::siteMapChanged(std::string newPath)
 
 void WsContent::doSearch(WString sSearch)
 {
-  if ( m_bLogContent )
-    wApp->log("notice") << "WsContent::doSearch = " << sSearch;
   clear();
   //    addWidget(new WText("searching : " + sSearch));
   //    WVBoxLayout*  vBox = new WVBoxLayout();
@@ -214,8 +207,9 @@ void WsContent::setPath(std::string newPath)
   }
   int perms = pUser->getPermissions(sPathWithoutPrefix);
   if ( perms == GlobalConfig::NotLogged ) {
-    wApp->log("ALERT") <<  "WsApplication::doEndDialogLogon() User is not logged " ;
-    wApp->redirect("/");
+      wApp->root()->clear();
+      wApp->root()->addWidget(new WsErrorPage(WsErrorPage::Forbidden, sPathWithoutPrefix,pUser, "User is not logged")); 
+      wApp->log("ALERT") <<  "WsApplication::doEndDialogLogon() User is not logged " ;
     return;
   }
   if ( perms != GlobalConfig::Read && perms != GlobalConfig::ReadWrite) {
@@ -227,12 +221,9 @@ void WsContent::setPath(std::string newPath)
     return;
   }
   if ( newPath == "/Logo" ) {
-    if ( m_bLogContent )
-      wApp->log("notice") << "WsContent::setPath : render the Logo : " << newPath;
     viewDirectory("/");
     return;
   }
-  wApp->log("notice") << "WsContent::setPath : compare search : " << newPath << " search path = " <<  m_searchPath;
   std::string s;
   try {
     s.assign(newPath, 0, m_searchPath.size());
@@ -307,8 +298,6 @@ void WsContent::selectWidget(std::string path)
   }
   // .fhtml (fragmented html)
   if ( strExt == ".fhtml" ) {
-    if ( m_bLogContent )
-      wApp->log("notice") << "WsContent::selectWidget : render a fragmented html file : " << sysPath;
     clear();
     WsApp->hideImages(false);
     WText* wtext = new WText();
@@ -402,7 +391,6 @@ void WsContent::selectWidget(std::string path)
       WsApp->hideImages(curModule->hideImages());
       curModule->setSysPath(sysPath);
       curModule->setDiffPath(m_sRelativeDocumentRoot);
-      wApp->log("notice") << "WsContent::selectWidget : module, render " << curModule->moduleName() << " call create content: ";
       WWidget* w = curModule->createContents();
       if ( w ) {
         if ( asString(curModule->option("useLayout")) == "true" ) {
@@ -424,13 +412,9 @@ void WsContent::selectWidget(std::string path)
 
 void WsContent::doSiteMapItemSelected(gdWFileView::signalType sigType, std::string selectedPath)
 {
-  if ( m_bLogContent )
-    wApp->log("notice") << "WsContent::doSiteMapItemSelected : path = " << selectedPath;
   std::string str = selectedPath;
   if ( sigType == gdWFileView::selected )
     boost::algorithm::replace_first(str, "/SiteMap", "");
-  if ( m_bLogContent )
-    wApp->log("notice") << "WsContent::doSiteMapItemSelected : setInternalPath = " << str;
   wApp->setInternalPath(str, true);
 }
 

@@ -23,7 +23,6 @@ using namespace Wt;
 WsTopBanner::WsTopBanner(WContainerWidget* parent)
   : WContainerWidget(parent)
 {
-  wApp->log("notice") << "WsTopBanner::WsTopBanner CTOR";
   //  if ( WsLayoutProperties::instance()->get("global", "by_object_stylesheet", "false") == "true" )
   if ( WString::tr("byObjectStyleSheet").narrow() == "true" )
     wApp->useStyleSheet(wApp->theme()->resourcesUrl() + "wittyshare/Css/WsTopBanner.css");

@@ -63,12 +63,10 @@ void WsFileUpload::load()
 
 WsFileUpload::~WsFileUpload()
 {
-  LOG(DEBUG) << "WsFileUpload::~WsFileUpload() !";
 }
 
 void WsFileUpload::doUpload()
 {
-  wApp->log("notice") << " WsFileUpload::doUpload() : start upload";
   m_pFU->upload();
 }
 
@@ -84,19 +82,16 @@ void WsFileUpload::doCancel()
 void WsFileUpload::doUploaded()
 {
   // TODO : Verif des paths, quid si multiples file ?, optimiser les strings, progressbar marche pas, , ajout d'un champ  : nom desire a l'arrivee ?, test si file existe : replace ?
-  wApp->log("notice") << " WsFileUpload::doUploaded() " << m_pFU->spoolFileName();
   std::string sCurUrl          = wApp->internalPath();
   std::string sWithoutPrefix   = WsApp->WsModules().pathWithoutPrefix(sCurUrl);
   WsUser*     pUser            = WsApp->wsUser();
   std::string m_sDocumentRoot  = pUser->getRootPath(); // /var/www/demo_site
   std::string sCurPath         = m_sDocumentRoot + sWithoutPrefix;
-  wApp->log("notice") << " WsFileUpload::doUploaded() current path = " << sCurPath;
   std::string sNewFile;
   if ( gdcore_isPathFile(sCurPath) )
     sNewFile = boost::filesystem::path(sCurPath).parent_path().string() + "/" + m_pFU->clientFileName().toUTF8();
   else
     sNewFile = sCurPath + "/" + m_pFU->clientFileName().toUTF8();
-  wApp->log("notice") << " WsFileUpload::doUploaded() current dir = " << sNewFile;
   if (exists(sNewFile)) {
     LOG(DEBUG) << "WsFileUpload::doUploaded(): sNewFile already exist " << sNewFile;
     m_dialog->hide();
@@ -116,7 +111,6 @@ void WsFileUpload::doUploaded()
     //  The remove is make by the Wt::WFileUpload class
     //    boost::filesystem::remove(m_pFU->spoolFileName());
     boost::algorithm::replace_first(sNewFile, m_sDocumentRoot, "/Edit");
-    wApp->log("notice") << " WsFileUpload::doUploaded() set internalPath to : " << sNewFile;
     sleep(1);
     std::string newNode = sNewFile;
     boost::algorithm::replace_all(newNode, "/Edit", "");
@@ -142,12 +136,10 @@ void WsFileUpload::doFileTooLarge(int64_t nSize)
 WsModFileUpload::WsModFileUpload()
   : WsModule()
 {
-  WApplication::instance()->log("notice") << "end ctor of WsModFileUpload !";
 }
 
 WsModFileUpload::~WsModFileUpload()
 {
-  //  WApplication::instance()->log("notice") << "end dtor of WsModFileUpload !";
 }
 
 WWidget* WsModFileUpload::createContentsMenuBar(WContainerWidget* parent) const
@@ -158,7 +150,6 @@ WWidget* WsModFileUpload::createContentsMenuBar(WContainerWidget* parent) const
 WWidget* WsModFileUpload::createContents(WContainerWidget* parent) const
 {
   WsFileUpload* pFU = new WsFileUpload(parent);
-  wApp->log("notice") <<  "WsModFileUpload::createContents() : prepare options ";
   pFU->setOptions(options());
   pFU->outOptions("WsModFileUpload::createContents()");
   return pFU;

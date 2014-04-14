@@ -32,13 +32,11 @@ using namespace Wt;
 WsTemplate::WsTemplate(const std::string& templateFile, const std::string& initialPath, WContainerWidget* parent)
   : WTemplate(parent), m_sInitialPath(initialPath)
 {
-  wApp->log("notice") << "WsTemplate::WsTemplate - templateFile " << templateFile << " initialPath = " << initialPath;
   propagateSetEnabled(true);
   if ( WString::tr("byObjectStyleSheet").narrow() == "true" )
     wApp->useStyleSheet(wApp->theme()->resourcesUrl() + "wittyshare/Css/WsTemplate.css");
   addStyleClass("WsTemplate");
   std::string tFile = matchTemplate(templateFile);
-  wApp->log("notice") << "WsTemplate::WsTemplate - loading " << tFile;
   std::string fileContent;
   if ( !gdcore_file_content2string(tFile.c_str(), fileContent) ) {
     wApp->log("ERROR") << "WsTemplate::WsTemplate - cannot load " << tFile;
@@ -56,14 +54,12 @@ std::string WsTemplate::matchTemplate(const std::string& templateFile)
   std::string curPath = wApp->internalPath();
   boost::algorithm::replace_all(curPath, "&amp;",  "&");
   std::string tFile   = pUser->getRootPath() + curPath;
-  wApp->log("notice") << "WsTemplate::matchTemplate() tFile = " << tFile;
   boost::filesystem::path current(tFile);
   if ( !boost::filesystem::is_directory(current) )
     current = current.parent_path();
   std::string sCurrent;
   while (1) {
     sCurrent      = current.string() + GlobalConfig::PathToTemplates + templateFile;
-    wApp->log("notice") << "WsTemplate::matchTemplate() sCurrent = " << sCurrent;
     if ( boost::filesystem::exists(sCurrent) )         return sCurrent;
     if ( pUser->getRootPath() == current.string() )    return templateFile;
     current = current.parent_path();
@@ -72,7 +68,6 @@ std::string WsTemplate::matchTemplate(const std::string& templateFile)
 
 WWidget* WsTemplate::resolveWidget(const std::string& varName)
 {
-  wApp->log("notice") << "WsTemplate::resolveWidget var = " << varName;
   // if ( fileContent.find("${WsTopBanner}") != string::npos ) {
   if ( varName == "WsLogo" ) {
     WsLogo* pLogo = new WsLogo();
@@ -121,7 +116,6 @@ WWidget* WsTemplate::resolveWidget(const std::string& varName)
 
 void WsTemplate::resolveString(const std::string& varName, const std::vector< WString >& args, std::ostream& result)
 {
-  wApp->log("notice") << "WsTemplate::resolveString var = " << varName;
   // TODO : remove  when Koen adapt resolveWidget with a list of arguments.
   // WsContent does exist only one time
   if ( varName == "WsContent" ) {
@@ -134,7 +128,6 @@ void WsTemplate::resolveString(const std::string& varName, const std::vector< WS
       std::string attr;
       std::string val;
       gdcore_string_split(args[count].toUTF8(), attr, val, '=');
-      wApp->log("notice") << "WsTemplate::resolveString args " << count << " attr = " << attr << " val " << val;
       if ( attr == "useLayout" && val == "true" )
         bUseLayout = true;
       if ( attr == "homePage" )
@@ -161,14 +154,12 @@ void WsTemplate::resolveString(const std::string& varName, const std::vector< WS
       std::string attr;
       std::string val;
       gdcore_string_split(args[count].toUTF8(), attr, val, '=');
-      wApp->log("notice") << "WsTemplate::resolveString creating new WsTemplate with args " << count << " attr = " << attr << " val " << val;
       if ( attr == "templateFile" )
         templateFile = val;
       if ( attr == "templateClass" )
         templateClass = val;
     }
     if ( templateFile.size() > 0 ) {
-      wApp->log("notice") << "WsTemplate::resolveString creating new WsTemplate with templateFile = " << templateFile;
       WsTemplate* pTemplate = new WsTemplate(templateFile, m_sInitialPath);
       if ( templateClass.size() > 0 )
         pTemplate->addStyleClass(templateClass);
@@ -189,9 +180,7 @@ void WsTemplate::resolveString(const std::string& varName, const std::vector< WS
     //  I add a _ in place of by example WsModAnchor_Disclaimer and locate this _ after I split the string and compare the module name
     std::string right;
     gdcore_string_split(varName, moduleName, right, '_');
-    //    wApp->log("notice") << "WsTemplate::resolveString compare module name " << curModule->moduleName() << " varName = " << varName << " with splited varname " << moduleName;
     if ( curModule->moduleName() != moduleName ) continue;
-    wApp->log("notice") << "WsTemplate::resolveString creating module " << curModule->moduleName();
     // TODO : Verifier si c'est compatible dans tous les cas de figures
     curModule->setSysPath(sysPath);
     curModule->setDiffPath(m_sRelativeDocumentRoot);
@@ -200,7 +189,6 @@ void WsTemplate::resolveString(const std::string& varName, const std::vector< WS
       std::string attr;
       std::string val;
       gdcore_string_split(args[count].toUTF8(), attr, val, '=');
-      wApp->log("notice") << "WsTemplate::resolveString args and setting widget option " << count << " attr = " << attr << " val " << val;
       WsOptions* wOpt = dynamic_cast<WsOptions*>(w);
       wOpt->setOption(attr, val);
     }

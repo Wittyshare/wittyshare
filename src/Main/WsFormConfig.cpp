@@ -265,7 +265,6 @@ void WsFormConfig::doSave()
   bool     bUpdated = false;
   WDateTime   dt(m_pDatePicker->date(), WTime::currentServerTime());
   std::string sDateTime    = dt.toString("yyyy-MM-dd hh:mm:ss").narrow();
-  wApp->log("notice") << "WsFormConfig::doSave() dateTime " << sDateTime << " initial value = " << m_wDateTime.toString("yyyy-MM-dd hh:mm:ss").narrow();
   std::string sName        = m_pName->text().toUTF8();
   if ( sName.size() < 2 ) return;
   std::string sInitPage    = "";
@@ -292,10 +291,6 @@ void WsFormConfig::doSave()
     m_vEditorWidget[iModule]->saveEditor();
   }
   WsUser* pUser = WsApp->wsUser();
-  wApp->log("notice") << "WsFormConfig::doSave() date = " << sDateTime << " sInitPage " << sInitPage << " sName " << sName << " sTemplate " << sTemplate
-                      << " DisplayName = " << sDisplayName << " author = " << sAuthor
-                      << " in_menu = " << sInMenu << " in_view = " << sInView << " sort = " << sSort << " sort number = " << sSortNumber
-                      << " inherit_rights_from_parent " << sInheritRights << " short_description = " << sShortDesc;
   if ( m_wDateTime != dt ) {
     m_pNode->getProperties().get()->set("global", "publish_date",      boost::lexical_cast<std::string>(dt.toTime_t()));
     bUpdated = true;

@@ -95,27 +95,18 @@ void WsImages2::load()
 
 void WsImages2::build()
 {
-  wApp->log("notice") << "WsImages2::load() start ";
-  if ( asString(option("debug")) == "true" )
-    m_bDebug = true;
   long lDelay = asNumber(option("image_delay"));
   if ( lDelay > 0 )
     m_lDelay = lDelay;
   if ( asString(option("reactWhenPathChange")) == "false" )
     m_bReactWhenPathChange = false;
   std::string sImagesPath = asString(option("imagesPath")).toUTF8();
-  wApp->log("notice") << "WsImages2::load imagesPath = " << sImagesPath;
   if ( sImagesPath.size() < 1 )
     sImagesPath = wApp->theme()->resourcesUrl() + "wittyshare/Images/WsImages2";
-  if ( m_bDebug )
-    wApp->log("notice") << "WsImages2::load imagesPath = " << sImagesPath;
   if (  boost::filesystem::is_directory(WsApp->docRoot() + sImagesPath) ) {
-    if ( m_bDebug )
-      wApp->log("notice") << "WsImages2::build() start";
     boost::filesystem::directory_iterator end_itr;
     try {
       for (boost::filesystem::directory_iterator itr_dir(WsApp->docRoot() + sImagesPath); itr_dir != end_itr; ++itr_dir) {
-        wApp->log("notice") << "WsImages2::In loop " << sImagesPath;
         if ( ! ( itr_dir->path().extension() == ".jpeg"
                  || itr_dir->path().extension() == ".jpg"
                  || itr_dir->path().extension() == ".png"
@@ -125,8 +116,6 @@ void WsImages2::build()
         if ( boost::filesystem::is_directory(itr_dir->status()) )        continue;
         boost::filesystem::path newPath = itr_dir->path();
         m_sImagesVect.push_back(newPath.string());
-        if ( m_bDebug )
-          wApp->log("notice") << "WsImages2::build() new image : path =" << newPath.string();
       }
     } catch (boost::filesystem::filesystem_error& e) {
       wApp->log("ERROR") << "WsImages2::build() bad image path =" << sImagesPath << " error = " << e.what();
@@ -178,8 +167,6 @@ void WsImages2::build()
     m_sImagesText.push_back(sShortDescription);
   }
   m_bLoaded = true;
-  if ( m_bDebug )
-    wApp->log("notice") << "WsImages2::build() end";
 }
 
 int WsImages2::count()
@@ -190,8 +177,6 @@ int WsImages2::count()
 void WsImages2::doTimeout()
 {
   if ( m_bOnLoad ) return;
-  //  if ( m_bDebug )
-  //     wApp->log("notice") << "WsImages2::doTimeout() m_nCurrentImage = " << m_nCurrentImage;
   if ( (m_nCurrentImage + 1) >= m_sImagesVect.size() )   m_nCurrentImage = 0;
   else                                                ++m_nCurrentImage;
   loadImage();
@@ -206,8 +191,6 @@ void WsImages2::loadImage()
 {
   if ( m_bOnLoad ) return;
   m_bOnLoad = true;
-  if ( m_bDebug )
-    WApplication::instance()->log("notice") << "WsImages2::loadImage()";
   if ( !m_sImagesVect.size() ) {
     WApplication::instance()->log("notice") << "WsImages2::loadImage() : no images !";
     m_bOnLoad = false;
@@ -244,12 +227,8 @@ void WsImages2::loadImage()
   }
   std::string curImgUrl(m_sImagesVect[m_nCurrentImage]);
   gdImageProperties imgProp = gdImage_size(curImgUrl);
-  if ( m_bDebug )
-    wApp->log("notice") << "WsImages2::loadImage set image width to " << imgProp.width << " and height = " << imgProp.height;
   boost::algorithm::replace_first(curImgUrl, wApp->docRoot(), "");
   WLink myLink(WLink::Url, curImgUrl);
-  if ( m_bDebug )
-    wApp->log("notice") << "WsImages2::loadImage WLink = " << curImgUrl;
   if ( asString(option("imageInBackground")) == "true" ) {
     cwImg->decorationStyle().setBackgroundImage(myLink, Wt::WCssDecorationStyle::NoRepeat);
     if ( asString(option("textWidget")) == "true" ) {
@@ -273,8 +252,6 @@ void WsImages2::loadImage()
   }
   if ( asString(option("plusWidget")) == "true" ) {
     std::string curImgUrl2(m_sImagesLink[m_nCurrentImage]);
-    if ( m_bDebug )
-      wApp->log("notice") << "WsImages2::loadImage curImgUrl =  " << curImgUrl2;
     WAnchor* pA = new WAnchor(WLink(WLink::InternalPath, curImgUrl2), "+");
     pA->addStyleClass("WsPlusWidget");
     cwImg->addWidget(pA);
@@ -283,8 +260,6 @@ void WsImages2::loadImage()
   addWidget(cwImg);
   // TODO : test if needed
   refresh();
-  if ( m_bDebug )
-    wApp->log("notice") << "WsImages2::loadImage " << curImgUrl;
   m_bOnLoad = false;
 }
 
@@ -295,14 +270,12 @@ const std::string& WsImages2::text()
 
 void WsImages2::doImageClicked()
 {
-  wApp->log("notice") << "WsImages2::doImageClicked path = " << m_sImagesLink[m_nCurrentImage];
   wApp->setInternalPath(m_sImagesLink[m_nCurrentImage], true);
 }
 
 void WsImages2::doCounterClicked(int index)
 {
   if ( m_bOnLoad ) return;
-  wApp->log("notice") << "WsImages2::doCounterClicked index = " << index;
   m_nCurrentImage = index;
   loadImage();
 }

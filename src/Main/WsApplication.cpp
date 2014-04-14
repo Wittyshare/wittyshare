@@ -92,9 +92,10 @@ void WsApplication::doEndDialogLogon(std::string sUid, std::string pPassword)
       wApp->redirect("/");
     }
     if ( perms != GlobalConfig::Read && perms != GlobalConfig::ReadWrite)  {
-      wApp->log("ALERT") <<  "WsApplication::doEndDialogLogon() URL not allowed !!! "  << truePath << " with oldInternalPath = " << oldInternalPath << "perms = " << perms;
-      wApp->redirect("/");
-      // TODO : ERROR Page
+      root()->clear();
+      wApp->root()->addWidget(new WsErrorPage(WsErrorPage::Forbidden, truePath,m_pUser, "")); 
+      //wApp->log("ALERT") <<  "WsApplication::doEndDialogLogon() URL not allowed !!! "  << truePath << " with oldInternalPath = " << oldInternalPath << "perms = " << perms;
+      //wApp->redirect("/");
       // Do not display error because urls from the old website then display an empty page with only Forbidden, and not link.
       //root()->clear();
       //root()->addWidget(new WText("<b>Forbidden !</b>"));
@@ -102,7 +103,6 @@ void WsApplication::doEndDialogLogon(std::string sUid, std::string pPassword)
     }
   } else {
     oldInternalPath = ""; // reset sais + pq
-    wApp->log("notice") <<  "WsApplication::doEndDialogLogon() reset internalPath new value = "  << oldInternalPath;
   }
   m_sHomePage = m_pUser->getHomePage();
   if ( WsLayoutProperties::instance()->get("global", "use_template", "true") == "true") {
@@ -150,7 +150,6 @@ void WsApplication::doEndDialogLogon(std::string sUid, std::string pPassword)
   }
   wApp->internalPathChanged().connect(SLOT(this, WsApplication::doPathChanged));
   wApp->internalPathChanged().connect(SLOT(this, WsApplication::googleAnalyticsLogger));
-  //root()->resize(WLength(100, WLength::Percentage), WLength(100, WLength::Percentage));
 }
 
 WsApplication::~WsApplication()
@@ -189,7 +188,6 @@ void WsApplication::setTemplate(const std::string& sPageOrig)
     std::string     truePath(WsModules().pathWithoutPrefix(sPage));
     NodePtr rootNode = m_pUser->getAccessRoot();
     if ( !rootNode.get() ) {
-      wApp->log("ALERT") <<  "WsApplication::setTemplate() root node is null !! ";
       root()->addWidget(new WsErrorPage(WsErrorPage::Error, sPage,m_pUser, "WsApplication::setTemplate() root node is null")); 
       return;
     }

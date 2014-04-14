@@ -47,7 +47,6 @@ WsFollowUs::WsFollowUs(WContainerWidget* parent)
 
 WsFollowUs::~WsFollowUs()
 {
-  LOG(DEBUG) << "WsFollowUs::~WsFollowUs() !";
 }
 
 void WsFollowUs::load()
@@ -86,12 +85,10 @@ void WsFollowUs::load()
 WsModFollowUs::WsModFollowUs()
   : WsModule()
 {
-  WApplication::instance()->log("notice") << "end ctor of WsModFollowUs !";
 }
 
 WsModFollowUs::~WsModFollowUs()
 {
-  //  WApplication::instance()->log("notice") << "end dtor of WsModFollowUs !";
 }
 
 WWidget* WsModFollowUs::createContentsMenuBar(WContainerWidget* parent) const
@@ -102,7 +99,6 @@ WWidget* WsModFollowUs::createContentsMenuBar(WContainerWidget* parent) const
 WWidget* WsModFollowUs::createContents(WContainerWidget* parent) const
 {
   WsFollowUs* pFU = new WsFollowUs(parent);
-  wApp->log("notice") <<  "WsModFollowUs::createContents() : prepare options ";
   pFU->setOptions(options());
   pFU->outOptions("WsModFollowUs::createContents()");
   return pFU;

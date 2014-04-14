@@ -13,7 +13,6 @@ using namespace Wt;
 extern "C" {
   void WsModTwitterStreamInit(void)
   {
-    LOG(DEBUG) << "WsModTwitterStream :: Preparing required libraries : libwt.so";
     void* hndl = dlopen("libwt.so", RTLD_NOW | RTLD_GLOBAL);
     if ( hndl == NULL ) {
       LOG(ERROR) << "WsModTwitterStream :: Cannot load libwt.so shared library! " << dlerror();

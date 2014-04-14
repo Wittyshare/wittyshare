@@ -59,8 +59,6 @@ WsSearchView::WsSearchView(std::string sSearch, WContainerWidget* parent)
   if (WsLayoutProperties::instance()->get("sitemap", "log", "false") == "true")
     m_bLogSearch = true;
   wApp->messageResourceBundle().use(wApp->docRoot() + wApp->resourcesUrl() + "wittyshare/Transl/WsSearchView");
-  if ( m_bLogSearch )
-    wApp->log("notice") << "WsSearchView::WsSearchView() start";
   m_pModelView = new WStandardItemModel(0, 4);
   m_pModelView->setHeaderData(0, WString::tr("WsSearchView-Name"));
   m_pModelView->setHeaderData(1, WString::tr("WsSearchView-Desc"));
@@ -75,8 +73,6 @@ WsSearchView::WsSearchView(std::string sSearch, WContainerWidget* parent)
     return;
   }
   std::vector<WsResultItem> vResSearch = pUser->getSearchResults(sSearch);
-  if ( m_bLogSearch )
-    wApp->log("notice") << "WsSearchView::WsSearchView() search results contain : " <<  vResSearch.size() << " rows";
   for (int row = 0; row < vResSearch.size(); ++row) {
     NodePtr pNode        = pRootNode.get()->eatPath(vResSearch[row].getPath().string());
     if ( !pNode.get() ) {
@@ -103,8 +99,6 @@ WsSearchView::WsSearchView(std::string sSearch, WContainerWidget* parent)
     localtime_r(&tTime, &ttm);
     strftime(c, 100, "%Y-%m-%d", &ttm);
     strDate = c;
-    if ( m_bLogSearch )
-      wApp->log("notice") << "WsSearchView::WsSearchView() item " << row << " = " << sName << " size = " << lSize << " date " << strDate << " full path = " << vResSearch[row].getPath().string();
     std::vector<WStandardItem*> pRow;
     WsSearchItem*  newItem = new WsSearchItem(WString::fromUTF8(sName));
     newItem->setNode(&vResSearch[row]);
@@ -145,20 +139,14 @@ WsSearchView::WsSearchView(std::string sSearch, WContainerWidget* parent)
   setItemDelegateForColumn(1, delegate2);
   doubleClicked().connect(SLOT(this, WsSearchView::onViewDblClick));
   selectionChanged().connect(SLOT(this, WsSearchView::onViewSelectionChanged));
-  if ( m_bLogSearch )
-    wApp->log("notice") << "WsSearchView::WsSearchView() end";
 }
 
 WsSearchView::~WsSearchView()
 {
-  if ( m_bLogSearch )
-    wApp->log("notice") << "WsSearchView::~WsSearchView() start";
   if ( m_pModelView ) {
     delete m_pModelView;
     m_pModelView = 0;
   }
-  if ( m_bLogSearch )
-    wApp->log("notice") << "WsSearchView::~WsSearchView() stop";
 }
 
 WWidget* WsSearchView::navBar()
@@ -178,7 +166,6 @@ void WsSearchView::onViewDblClick(WModelIndex idx, WMouseEvent mouseEvent)
     idxcol0 = idx;
   if ( !idxcol0.isValid() ) return;
   std::string str = asString(idxcol0.data(UserRole)).toUTF8();
-  wApp->log("notice") <<  "WsSearchView::onViewDblClick() : path = " << str;
   wApp->setInternalPath(str, true);
 }
 
@@ -189,7 +176,6 @@ void WsSearchView::onViewSelectionChanged()
   if ( pSet.empty() ) return;
   WModelIndex    idx = *it;
   std::string str = asString(idx.data(UserRole)).toUTF8();
-  wApp->log("notice") <<  "WsSearchView::onViewSelectionChanged() : path = " << str;
   wApp->setInternalPath(str, true);
 }
 

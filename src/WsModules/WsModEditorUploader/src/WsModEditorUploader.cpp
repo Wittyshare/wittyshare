@@ -67,17 +67,14 @@ void WsEditorUploader::load()
   m_pFU->uploaded().connect(this, &WsEditorUploader::doUploaded);
   m_pFU->fileTooLarge().connect(this, &WsEditorUploader::doFileTooLarge);
   addWidget(m_pFU);
-  WApplication::instance()->log("notice") << "WsEditorUploader::load : end !";
 }
 
 WsEditorUploader::~WsEditorUploader()
 {
-  LOG(DEBUG) << "WsEditorUploader::~WsEditorUploader() !";
 }
 
 void WsEditorUploader::doUpload()
 {
-  wApp->log("notice") << " WsEditorUploader::doUpload() : start upload";
   m_pFU->upload();
 }
 
@@ -85,21 +82,17 @@ void WsEditorUploader::doUpload()
 void WsEditorUploader::doUploaded()
 {
   // TODO : Verif des paths, quid si multiples file ?, optimiser les strings, progressbar marche pas, , ajout d'un champ  : nom desire a l'arrivee ?, test si file existe : replace ?
-  wApp->log("notice") << " WsEditorUploader::doUploaded() " << m_pFU->spoolFileName();
   std::string sCurUrl          = wApp->internalPath();
   std::string sWithoutPrefix   = WsApp->WsModules().pathWithoutPrefix(sCurUrl);
   WsUser*     pUser            = WsApp->wsUser();
   std::string m_sDocumentRoot  = pUser->getRootPath(); // /var/www/demo_site
   std::string sCurPath         = m_sDocumentRoot + sWithoutPrefix;
-  wApp->log("notice") << " WsEditorUploader::doUploaded() current path = " << sCurPath;
   std::string sNewFile;
   if ( gdcore_isPathFile(sCurPath) )
     sNewFile = boost::filesystem::path(sCurPath).parent_path().string() + "/ws.res/" + m_pFU->clientFileName().toUTF8();
   else
     sNewFile = sCurPath + "/ws.res/" + m_pFU->clientFileName().toUTF8();
-  LOG(DEBUG) << "WsEditorUploader::doUploaded(): sNewFile is " << sNewFile;
   if (exists(sNewFile)) {
-    LOG(DEBUG) << "WsEditorUploader::doUploaded(): sNewFile already exist " << sNewFile;
     if (m_uploadOther != 0) {
       m_uploadOther->hide();
       delete m_uploadOther;
@@ -129,13 +122,11 @@ void WsEditorUploader::doUploaded()
       return;
     }
   }
-  wApp->log("notice") << " WsEditorUploader::doUploaded() current dir = " << sNewFile;
   try {
     boost::filesystem::copy_file(m_pFU->spoolFileName(), sNewFile, copy_option::overwrite_if_exists);
     //  The remove is made by the Wt::WFileUpload class
     //    boost::filesystem::remove(m_pFU->spoolFileName());
     boost::algorithm::replace_first(sNewFile, m_sDocumentRoot, "/Edit");
-    wApp->log("notice") << " WsEditorUploader::doUploaded() set internalPath to : " << sNewFile;
     sleep(1);
     std::string newNode = sNewFile;
     boost::algorithm::replace_all(newNode, "/Edit", "");
@@ -165,12 +156,10 @@ void WsEditorUploader::doFileTooLarge(int64_t nSize)
 WsModEditorUploader::WsModEditorUploader()
   : WsModule()
 {
-  WApplication::instance()->log("notice") << "end ctor of WsModEditorUploader !";
 }
 
 WsModEditorUploader::~WsModEditorUploader()
 {
-  //  WApplication::instance()->log("notice") << "end dtor of WsModEditorUploader !";
 }
 
 WWidget* WsModEditorUploader::createContentsMenuBar(WContainerWidget* parent) const
@@ -181,7 +170,6 @@ WWidget* WsModEditorUploader::createContentsMenuBar(WContainerWidget* parent) co
 WWidget* WsModEditorUploader::createContents(WContainerWidget* parent) const
 {
   WsEditorUploader* pFU = new WsEditorUploader(parent);
-  wApp->log("notice") <<  "WsModEditorUploader::createContents() : prepare options ";
   pFU->setOptions(options());
   pFU->outOptions("WsModEditorUploader::createContents()");
   return pFU;

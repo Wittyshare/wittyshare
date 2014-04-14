@@ -35,12 +35,10 @@ WsModBanners::WsModBanners()
   : WsModule()
 {
   wApp->messageResourceBundle().use(wApp->docRoot() + wApp->resourcesUrl() + "WsModBanners/Transl/WsModBanners");
-  LOG(DEBUG) << "WsModBanners::WsModBanners end ctor!";
 }
 
 WsModBanners::~WsModBanners()
 {
-  LOG(DEBUG) << "WsModBanners::~WsModBanners : dtor";
 }
 
 WWidget* WsModBanners::createContentsMenuBar(WContainerWidget* parent) const

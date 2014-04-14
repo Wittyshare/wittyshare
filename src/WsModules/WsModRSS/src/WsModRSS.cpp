@@ -53,12 +53,10 @@ WsModRSS::WsModRSS()
   : WsModule()
 {
   wApp->messageResourceBundle().use(wApp->docRoot() + wApp->resourcesUrl() + "WsModRSS/Transl/WsModRSS");
-  LOG(DEBUG) << "WsModRSS :: end ctor of WsModRSS !";
 }
 
 WsModRSS::~WsModRSS()
 {
-  LOG(DEBUG) << "WsModRSS :: end dtor of WsModRSS !";
 }
 
 WWidget* WsModRSS::createContentsMenuBar(WContainerWidget* parent) const
@@ -90,9 +88,7 @@ std::string WsModRSS::description() const
 
 void WsModRSS::buildMenuBar(WContainerWidget* parent)
 {
-  LOG(DEBUG) << "WsModRSS:buildMenuBar: ";
   if ( !contentButtonsBar() ) return;
-  LOG(DEBUG) << "WsModRSS::buildMenuBar has a menu bar ";
   WsUser*           pUser   = WsApp->wsUser();
   if ( pUser->isAdministrator() || pUser->isEditor() )  {
     WsRSS* m_pRSS = new WsRSS(parent);

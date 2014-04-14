@@ -50,7 +50,6 @@ void WsTwitterEditorWidget::load()
   WsUser* user = WsApplication::wsInstance()->wsUser();
   string path = WApplication::instance()->internalPath();
   path = WsApplication::wsInstance()->WsModules().pathWithoutPrefix(path);
-  LOG(DEBUG) << "WsTwitterEditorWidget::load() " << path;
   std::string prop(user->getProperty(path, "WsModTwitter", "twitter_enable", "true"));
   m_cb = new WCheckBox("Enable twitter ?");
   if ( prop == "true" ) {
@@ -68,7 +67,6 @@ bool WsTwitterEditorWidget::saveEditor()
   WsUser* user = WsApplication::wsInstance()->wsUser();
   string path = WApplication::instance()->internalPath();
   path = WsApplication::wsInstance()->WsModules().pathWithoutPrefix(path);
-  LOG(DEBUG) << "WsTwitterEditorWidget::saveEditor " << path;
   if ( m_cb->checkState() != m_cbState )
     if ( user->saveProperty(path, "WsModTwitter", "twitter_enable", m_cb->checkState() ? "true" : "false") == FAILURE ) return false;
   return true;
@@ -79,12 +77,10 @@ bool WsTwitterEditorWidget::saveEditor()
 
 WsModTwitter::WsModTwitter() : WsModule(), m_buttonReTweet(0)
 {
-  LOG(DEBUG) << "WsModTwitter::WsModTwitter() end ctor of WsModTwitter !";
 }
 
 WsModTwitter::~WsModTwitter()
 {
-  LOG(DEBUG) << "WsModTwitter::WsModTwitter() end dtor of WsModTwitter !";
 }
 
 WWidget* WsModTwitter::createContentsMenuBar(WContainerWidget* parent) const
@@ -92,7 +88,6 @@ WWidget* WsModTwitter::createContentsMenuBar(WContainerWidget* parent) const
   bool b = true;
   if ( asString(option("inContentMenuBar")) == "false" )
     b = false;
-  LOG(DEBUG) << "WsModTwitter::createContentsMenuBar inContentMenuBar = " << b;
   if ( !b ) return 0;
   WsModTwitter* self =  const_cast<WsModTwitter*>(this);
   self->buildMenuBar();
@@ -135,9 +130,7 @@ WWidget* WsModTwitter::buildMenuBar()
 
 void WsModTwitter::handleTwitterClick()
 {
-  wApp->log("notice") <<  "WsModTwitter::handleTwitterClick()";
   if ( !m_buttonReTweet ) return;
-  wApp->log("notice") <<  "WsModTwitter::handleTwitterClick() button ok";
   WsUser*     pUser   = WsApp->wsUser();
   std::string curPath = wApp->internalPath();
   boost::algorithm::replace_all(curPath, "&amp;",  "&");
@@ -181,7 +174,6 @@ void WsModTwitter::handleTwitterClick()
   twitterUrl += sCurl;
   twitterUrl += "&via=";
   twitterUrl += "EUROFER_eu";
-  LOG(DEBUG) << "WsModTwitter::handleTwitterClick " << twitterUrl;
   m_buttonReTweet->setLink(twitterUrl);
 }
 

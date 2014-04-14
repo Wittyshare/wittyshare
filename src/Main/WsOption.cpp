@@ -74,10 +74,8 @@ const  std::vector<WsOption>& WsOptions::options() const
 
 void WsOptions::outOptions(const std::string message)
 {
-  wApp->log("notice") <<  message << " WsOptions::outOptions() starting options loop ";
   for (int iV = 0; iV < m_vOptions.size(); ++iV)
     wApp->log("notice") <<  message << " WsOptions::outOptions() Attribute : " << m_vOptions[iV].attribute() << ", Value : " << Wt::asString(m_vOptions[iV].value());
-  wApp->log("notice") <<  message << " WsOptions::outOptions() end options loop ";
 }
 
 WsModule::WsModule()

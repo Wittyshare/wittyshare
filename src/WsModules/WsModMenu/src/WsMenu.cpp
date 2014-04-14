@@ -37,22 +37,18 @@ WsMenu::WsMenu(WContainerWidget* parent)
 WsMenu::WsMenu(const std::string& path, WContainerWidget* parent)
   : WContainerWidget(parent), m_bDebug(false), m_sCurPath(path)
 {
-  LOG(DEBUG) << "WsMenu::WsMenu() ! " << this;
 }
 
 WsMenu::~WsMenu()
 {
-  LOG(DEBUG) << "WsMenu::~WsMenu() ! " << this;
 }
 
 void WsMenu::load()
 {
   WContainerWidget::load();
   addStyleClass("WsMenu");
-  wApp->log("notice") << "WsMenu::load() start";
   doLoadCurPath();
   wApp->internalPathChanged().connect(SLOT(this, WsMenu::doPathChanged));
-  wApp->log("notice") << "WsMenu::load() end";
 }
 
 void WsMenu::doLoadCurPath()
@@ -65,8 +61,6 @@ void WsMenu::doLoadCurPath()
   else
     m_sCurPath = rootPath;
   std::string sWithoutPrefix = WsApp->WsModules().pathWithoutPrefix(m_sCurPath);
-  if ( asString(option("debug")) == "true" )
-    wApp->log("notice") << "WsMenu::doLoadCurPath - internalPath = " << m_sCurPath << " without prefix : " << sWithoutPrefix;
   WsUser*         pUser     = WsApp->wsUser();
   NodePtr tmpNode = pUser->getAccessRoot().get()->eatPath(sWithoutPrefix);
   if ( !tmpNode.get() ) {
@@ -86,8 +80,6 @@ void WsMenu::doLoadCurPath()
     return;
   }
   NodePtr pNode = startNode.get()->eatPath(tmpNode.get()->getPath().string());
-  if ( asString(option("debug")) == "true" )
-    wApp->log("notice") << "WsMenu::doLoadCurPath - pNode eathPath  = " << pNode.get();
   if ( !pNode.get() ) return;
   if ( asString(option("useTitle")) == "true" )   {
     std::string sTitle(pNode.get()->getDisplayName());
@@ -111,12 +103,8 @@ void WsMenu::doLoadCurPath()
 void WsMenu::loadMenu(NodePtr pNodeParent, WMenu* menuParent)
 {
   std::vector<NodePtr> dirNode = pNodeParent.get()->getAll();
-  if ( asString(option("debug")) == "true" )
-    wApp->log("notice") << "WsMenu::loadMenu- dirNode getAll size = " << dirNode.size() << " path " << pNodeParent.get()->getPath().string();
   for (std::vector<NodePtr>::iterator it = dirNode.begin(); it != dirNode.end(); ++it) {
     NodePtr curNode = *it;
-    if ( asString(option("debug")) == "true" )
-      wApp->log("notice") << "WsMenu::loadMenu - curNode path = " << curNode.get()->getPath().string();
     if(curNode.get()->getDisplayInMenu())
         createMenu(curNode, menuParent);
   }
@@ -127,22 +115,16 @@ void WsMenu::createMenu(NodePtr curNode, WMenu* menuParent)
   std::string path2Icon;
   WsUser*     pUser   = WsApp->wsUser();
   std::string sIcon   = curNode.get()->getProperties().get()->get("global", "icon", "");
-  if ( asString(option("debug")) == "true" )
-    wApp->log("notice") << "WsMenu::createMenu() icon properties = " << sIcon << " on path : " << curNode.get()->getPath().string();
   if ( sIcon.size() > 1 ) {
     NodePtr tmpNode = curNode;
     if ( tmpNode.get()->isRegularFile() )
       tmpNode   = curNode.get()->getParent();
     if ( tmpNode.get() ) {
       path2Icon = tmpNode.get()->getFullPath().string() + "/ws.res/icones/" + sIcon;
-      if ( asString(option("debug")) == "true" )
-        wApp->log("notice") << "WsMenu::createMenu() try if icon exists : " << path2Icon;
       if ( !boost::filesystem::exists(path2Icon) )
         path2Icon.clear();
       else {
         boost::algorithm::replace_first(path2Icon, WsApp->docRoot(), "");
-        if ( asString(option("debug")) == "true" )
-          wApp->log("notice") << "WsMenu::createMenu() match icon " << path2Icon; // /var/www/demo_site/ws.res/icones/house.png"
       }
     }
   }
@@ -171,8 +153,6 @@ void WsMenu::createMenu(NodePtr curNode, WMenu* menuParent)
       if ( button->link().type() == WLink::Url )
         button->setLinkTarget(TargetNewWindow);
     }
-    //     LOG(DEBUG)<<"WsMenu :: curnode is : "<<curNode.get()->getPath();
-    //     LOG(DEBUG)<<"WsMenu :: curnode sub size : "<<curNode.get()->getDirectories().size();
     bool popupAllowed = (curNode.get()->getProperties().get()->get("global", "allow_popup", "true") == "true" ? true : false);
     if ( curNode.get()->isDirectory() && popupAllowed && asString(option("usePopupMenu")) == "true" ) {
       if ( !(asString(option("noRootPopup")) == "true" && curNode.get()->getPath() == "/") ) {
@@ -221,14 +201,10 @@ void WsMenu::onMouseWentOver(WPushButton* pButton)
 void WsMenu::loadPopupMenu(NodePtr pNodeParent, Wt::WPopupMenu* menuParent)
 {
   std::vector<NodePtr> dirNode = pNodeParent->getAll();
-  if ( asString(option("debug")) == "true" )
-    wApp->log("notice") << "WsMenu::loadPopupMenu- dirNode getDirectories size = " << dirNode.size() << " path " << pNodeParent->getPath().string();
   for (std::vector<NodePtr>::iterator it = dirNode.begin(); it != dirNode.end(); ++it) {
     NodePtr curNode = *it;
     if(!curNode.get()->getDisplayInMenu())
         continue;
-    if ( asString(option("debug")) == "true" )
-      wApp->log("notice") << "WsMenu::loadPopupMenu - curNode path = " << curNode.get()->getPath().string();
     bool popupAllowed = (curNode.get()->getProperties().get()->get("global", "allow_popup", "true") == "true" ? true : false);
     if ( curNode.get()->isDirectory() && popupAllowed ) {
       WPopupMenu* pSubPopupMenu = new WPopupMenu();
@@ -259,7 +235,6 @@ WLink WsMenu::makeLink(const std::string& path, bool bUseIcon)
   else {
     if ( strExt == ".url" ) {
       boost::filesystem::path urlFile(m_sDocumentRoot + path);
-      wApp->log("notice") << "WsMenu::makeLink path = " << urlFile.string();
       std::string sUrl;
       std::ifstream f(urlFile.string().c_str());
       std::getline(f, sUrl); // url without CR
@@ -275,9 +250,7 @@ void WsMenu::loadImage(NodePtr pNodeParent)
 {
   std::string    endPath(GlobalConfig::PathToImages);
   std::string    curDir = pNodeParent->getFullPath().string() + endPath;
-  WApplication::instance()->log("notice") << "WsMenu::loadImage : path = " << curDir;
   if ( !boost::filesystem::exists(curDir) ) return;
-  WApplication::instance()->log("notice") << "WsMenu::loadImage : path = " << curDir << " has an image directory";
   WsImages2* pImg = new WsImages2(); //dynamic_cast<WsImages2*>(WsApp->WsModules().module("WsModImages2")->createContents());
   pImg->setOptions(options());
   long delay = asNumber(option("image_delay"));
@@ -289,7 +262,6 @@ void WsMenu::loadImage(NodePtr pNodeParent)
   pImg->setOption("textWidget", false);
   std::string curPathUrl = curDir;
   boost::algorithm::replace_first(curPathUrl, wApp->docRoot(), "");
-  WApplication::instance()->log("notice") << "WsMenu::loadImage : setImagesPath to : " << curPathUrl;
   pImg->setOption("imagesPath", std::string(curPathUrl));
   pImg->build();
   if ( !pImg->count() ) {
@@ -302,8 +274,6 @@ void WsMenu::loadImage(NodePtr pNodeParent)
 
 void WsMenu::doPathChanged(std::string newPath)
 {
-  if ( asString(option("debug")) == "true" )
-    wApp->log("notice") << "WsMenu::doPathChanged - path = " << newPath;
   if ( asString(option("useInternalPath")) == "true" ) {
     clear();
     doLoadCurPath();
@@ -323,7 +293,6 @@ void WsMenu::doSelectedMenu(std::string newPath)
     //    if ( lnk.type() == Wt::WLink::Resource )     curPath = lnk.resource()->internalPath(); // TODO : Wich # between internalPath & url ?
     if ( curPath.compare(0, curPath.size(), newPath) != 0 ) continue;
     m_vPushButton[iBut]->addStyleClass("WsSelected");
-    wApp->log("notice") << "WsMenu::doSelectedMenu - match in button curPath = " << curPath << " newPath = " << newPath;
     WPopupMenu* pPopup = m_vPushButton[iBut]->menu();
     //    if ( m_vPushButton[iBut]->
   }

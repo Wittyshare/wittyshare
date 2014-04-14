@@ -20,7 +20,6 @@ using namespace Wt;
 WsSiteMap::WsSiteMap(WContainerWidget* parent)
   : WContainerWidget(parent)
 {
-  wApp->log("notice") << "WsSiteMap::WsSiteMap CTOR";
   //if ( WsLayoutProperties::instance()->get("global", "by_object_stylesheet", "false") == "true" )
   if ( WString::tr("byObjectStyleSheet").narrow() == "true" )
     wApp->useStyleSheet(wApp->theme()->resourcesUrl() + "wittyshare/Css/WsSiteMap.css");

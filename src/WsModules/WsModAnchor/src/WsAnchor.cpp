@@ -38,17 +38,11 @@ WsAnchor::WsAnchor(WContainerWidget* parent)
 
 WsAnchor::~WsAnchor()
 {
-  if ( asString(option("debug")) == "true" )
-    LOG(DEBUG) << "WsAnchor::~WsAnchor() !";
 }
 
 void WsAnchor::load()
 {
   Wt::WContainerWidget::load();
-  if ( asString(option("debug")) == "true" )
-    Wt::WApplication::instance()->log("notice") << "WsAnchor::load()";
-  if ( asString(option("debug")) == "true" )
-    outOptions("WsAnchor::load()");
   std::string linkType = asString(option("linkType")).toUTF8(); // Url, Resource, InternalPath
   std::string link     = asString(option("link")).toUTF8();
   std::string text     = asString(option("text")).toUTF8();

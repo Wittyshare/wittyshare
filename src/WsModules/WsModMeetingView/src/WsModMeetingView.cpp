@@ -53,17 +53,14 @@ extern "C" {
 WsMeetingView::WsMeetingView(Wt::WContainerWidget* parent)
   : gdMeetingView(parent)
 {
-  LOG(DEBUG) << "WsMeetingView::WsMeetingView() !";
 }
 
 WsMeetingView::~WsMeetingView()
 {
-  LOG(DEBUG) << "WsMeetingView::~WsMeetingView() !";
 }
 
 void WsMeetingView::load()
 {
-  LOG(DEBUG) << "WsMeetingView::~WsMeetingView() !";
   long rowHeight = asNumber(option("rowHeight"));
   if ( rowHeight > 0 )
     setRowHeight(rowHeight);
@@ -90,12 +87,10 @@ WsModMeetingView::WsModMeetingView()
   : WsModule()
 {
   wApp->messageResourceBundle().use(wApp->docRoot() + wApp->resourcesUrl() + "WsModMeetingView/Transl/WsModMeetingView");
-  LOG(DEBUG) << "WsModMeetingView::WsModMeetingView() !";
 }
 
 WsModMeetingView::~WsModMeetingView()
 {
-  LOG(DEBUG) << "WsModMeetingView::~WsModMeetingView() !";
 }
 
 WWidget* WsModMeetingView::createContentsMenuBar(WContainerWidget* parent) const
@@ -105,7 +100,6 @@ WWidget* WsModMeetingView::createContentsMenuBar(WContainerWidget* parent) const
 
 WWidget* WsModMeetingView::createContents(WContainerWidget* parent) const
 {
-  wApp->log("notice") <<  "WsModMeetingView::createContents : start";
   WsMeetingView* dirView = new WsMeetingView(parent);
   dirView->setOptions(options());
   return dirView;

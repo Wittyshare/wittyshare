@@ -46,13 +46,10 @@ using namespace Wt;
 WsModAnchor::WsModAnchor()
   : WsModule()
 {
-  WApplication::instance()->log("notice") << "end ctor of WsModAnchor !";
 }
 
 WsModAnchor::~WsModAnchor()
 {
-  if ( asString(option("debug")) == "true" ) // Todo test is now crash if WsOptions is deleted before ?
-    LOG(DEBUG) << "WsModAnchor::~WsModAnchor() !";
 }
 
 WWidget* WsModAnchor::createContentsMenuBar(WContainerWidget* parent) const
@@ -64,8 +61,6 @@ WWidget* WsModAnchor::createContents(WContainerWidget* parent) const
 {
   WsAnchor* pAnchor = new WsAnchor(parent);
   pAnchor->setOptions(options());
-  if ( asString(option("debug")) == "true" )
-    pAnchor->outOptions("WsModAnchor::createContents()");
   return pAnchor;
 }
 

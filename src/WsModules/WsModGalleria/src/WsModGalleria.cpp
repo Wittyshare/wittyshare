@@ -44,12 +44,9 @@ void WsGalleria::load()
   WContainerWidget::load();
   setId("galleria");
   std::string  galleriaPath = WApplication::instance()->internalPath();
-  wApp->log("notice") << "WsGalleria::load() internalPath : " << galleriaPath; // /about/galleria
   boost::algorithm::replace_last(galleriaPath, "galleria", "ws.res/galleria");
-  wApp->log("notice") << "WsGalleria::load() galleriaPath : " << galleriaPath; // /about/ws.res/galleria
   WsUser* user = WsApplication::wsInstance()->wsUser();
   std::string fullGalleriaPath = user->getRootPath() + galleriaPath;
-  wApp->log("notice") << "WsGalleria::load() fullGalleriaPath : " << fullGalleriaPath; // /var/www/demo_site/about/ws.res/galleria
   boost::filesystem::directory_iterator end_itr;
   for (boost::filesystem::directory_iterator itr_dir(fullGalleriaPath + "/thumbnails"); itr_dir != end_itr; ++itr_dir) {
     if (   itr_dir->path().extension() == ".jpeg"
@@ -74,7 +71,6 @@ void WsGalleria::load()
   javaScript += wApp->resourcesUrl();
   javaScript += "galleria/themes/classic/galleria.classic.min.js'); \n";
   javaScript += "Galleria.run('#galleria');";
-  WApplication::instance()->log("notice") << "WsGalleria::load() execute this javascript : " << javaScript;
   WApplication::instance()->doJavaScript(javaScript);
 }
 
@@ -93,12 +89,10 @@ WsModGalleria::WsModGalleria()
   // Add the required javascript file
   WApplication::instance()->require("http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js");
   WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "galleria/galleria-1.2.9.min.js", "galleria");
-  LOG(DEBUG) << "WsModGalleria::WsModGalleria() !";
 }
 
 WsModGalleria::~WsModGalleria()
 {
-  LOG(DEBUG) << "WsModGalleria::~WsModGalleria() !";
 }
 
 WWidget* WsModGalleria::createContentsMenuBar(WContainerWidget* parent) const

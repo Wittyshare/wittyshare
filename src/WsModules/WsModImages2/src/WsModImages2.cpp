@@ -35,12 +35,10 @@ WsModImages2::WsModImages2()
   : WsModule()
 {
   wApp->messageResourceBundle().use(wApp->docRoot() + wApp->resourcesUrl() + "WsModImages2/Transl/WsModImages2");
-  LOG(DEBUG) << "WsModImages2::WsModImages2 end ctor!";
 }
 
 WsModImages2::~WsModImages2()
 {
-  LOG(DEBUG) << "WsModImages2::~WsModImages2 : dtor";
 }
 
 WWidget* WsModImages2::createContentsMenuBar(WContainerWidget* parent) const

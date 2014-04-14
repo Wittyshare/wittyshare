@@ -70,8 +70,6 @@ WsSiteMapView::WsSiteMapView(gdwtcore::viewType nViewType, gdWFileView::tbFlags 
     int nTmp = gdWFileView::tbDefault | gdWFileView::tbUseDummy;
     m_tbFlags = (gdWFileView::tbFlags) nTmp;
   }
-  if ( m_bLogSiteMap )
-    wApp->log("notice") << "WsSiteMapView::WsSiteMapView() start";
   //  resize(WLength(100, WLength::Percentage), WLength(100, WLength::Percentage));
   setOverflow(WContainerWidget::OverflowHidden);
   WsUser*         pUser          = WsApp->wsUser();
@@ -91,8 +89,6 @@ WsSiteMapView::~WsSiteMapView()
 void WsSiteMapView::load()
 {
   WContainerWidget::load();
-  if ( asString(option("debug")) == "true" )
-    wApp->log("notice") << "WsSiteMapView::load()";
   m_pModelTree = new WStandardItemModel(0, 1, this);
   m_pModelTree->setHeaderData(0, WString::tr("WsSiteMapView-Name"));
   m_pModelTree->setSortRole(UserRole);
@@ -161,13 +157,9 @@ void WsSiteMapView::load()
   if ( m_tbFlags & gdWFileView::tbUseToolbar ) {
     makeToolbar();
     vbox->addWidget(m_pTb, 0);
-    if ( m_bLogSiteMap )
-      wApp->log("notice") << "WsSiteMapView::WsSiteMapView() add toolBar";
   }
   vbox->addLayout(hbox, 1);
   setLayout(vbox);
-  if ( m_bLogSiteMap )
-    wApp->log("notice") << "WsSiteMapView::WsSiteMapView() end";
 }
 
 std::string WsSiteMapView::path2SiteMapPath(const std::string& path)
@@ -187,8 +179,6 @@ std::string WsSiteMapView::SiteMapPath2path(const std::string& siteMapPath)
 void WsSiteMapView::setRelativePath(const std::string& relativePath)
 {
   if ( !loaded() ) load();
-  if ( m_bLogSiteMap )
-    wApp->log("notice") <<  "WsSiteMapView::setRelativePath() = start with " << relativePath;
   std::string str(relativePath);
   boost::algorithm::replace_first(str, m_sSiteMap, "");
   if ( str.size() < 1 )
@@ -198,53 +188,36 @@ void WsSiteMapView::setRelativePath(const std::string& relativePath)
   //TODO FIXME redirect to not found page here
   if (!node.get())
     return;
-  if ( m_bLogSiteMap )
-    wApp->log("notice") <<  "WsSiteMapView::setRelativePath() = " << str << " and node path = " << (node ? node->getPath().string() : " No path in Node");
   init(node);
-  if ( m_bLogSiteMap )
-    wApp->log("notice") <<  "WsSiteMapView::setRelativePath() = end with " << node;
 }
 
 void WsSiteMapView::init(NodePtr pNode)
 {
   if (!pNode.get())
     return;
-  if ( m_bLogSiteMap )
-    wApp->log("notice") <<  "WsSiteMapView::init() start with node " << (pNode.get() ? pNode.get()->getPath().string() : " No path in Node");
   if ( m_pModelView->rowCount() )
     m_pModelView->removeRows(0, m_pModelView->rowCount());
   if ( m_tbFlags & gdWFileView::tbUseLeftTree )
     treeMatchPath(pNode);
   else if ( !loadTree(m_pModelView->invisibleRootItem(), pNode, gdWFileView::noSkipParent) ) {
-    if ( m_bLogSiteMap )
-      wApp->log("notice") <<  "WsSiteMapView::init() return with bad loadTree !!! ";
+      wApp->log("error") <<  "WsSiteMapView::init() return with bad loadTree !!! ";
     return;
   }
   m_selectedDirectory = m_sRootSiteMap + pNode.get()->getPath().string();
-  if ( m_bLogSiteMap )
-    wApp->log("notice") <<  "WsSiteMapView::init() set selectedDirectory to : "  << m_selectedDirectory;
 }
 
 bool WsSiteMapView::treeTraverse(WStandardItem* rootItem, const std::vector<std::string>& vPath, int nLevel)
 {
-  if ( m_bLogSiteMap )
-    wApp->log("notice") <<  "WsSiteMapView::treeTraverse() start with node = "  << rootItem->text() << " level " << nLevel;
   if ( nLevel >= vPath.size() ) return false;
   for (int nItem = 0; nItem < rootItem->rowCount(); ++nItem) {
     WsSiteMapItem* tmpItem = dynamic_cast<WsSiteMapItem*>(rootItem->child(nItem, 0));
     std::string str = tmpItem->text().toUTF8();
-    if ( m_bLogSiteMap )
-      wApp->log("notice") <<  "WsSiteMapView::treeTraverse() compare : "  << vPath[nLevel] << " str = " << str;
     if ( (vPath[nLevel]) == str )
       if ( nLevel == vPath.size() - 1 ) {
-        if ( m_bLogSiteMap )
-          wApp->log("notice") <<  "WsSiteMapView::treeTraverse() equal !";
         m_pTVTree->select(tmpItem->index());
         m_pTVTree->scrollTo(tmpItem->index());
         return true;
       } else {
-        if ( m_bLogSiteMap )
-          wApp->log("notice") <<  "WsSiteMapView::treeTraverse() not equal !";
         m_pTVTree->expand(tmpItem->index());
         onTreeExpanded(tmpItem->index());
         return treeTraverse(tmpItem, vPath, ++nLevel);
@@ -257,8 +230,6 @@ void WsSiteMapView::treeMatchPath(NodePtr pNode)
 {
   if (pNode.get() == 0)
     return;
-  if ( m_bLogSiteMap )
-    wApp->log("notice") <<  "WsSiteMapView::treeMatchPath() start with node = "  << pNode.get()->getPath().string();
   WsUser*                     pUser    = WsApp->wsUser();
   std::string                 myPath(pNode.get()->getPath().string());
   std::string                 rootPath = m_pTreecurNode.get()->getPath().string();
@@ -267,14 +238,10 @@ void WsSiteMapView::treeMatchPath(NodePtr pNode)
   // Bug dans getAccessRoot ?
   if ( rootPath.size() < 1 )
     rootPath = "/";
-  if ( m_bLogSiteMap )
-    wApp->log("notice") <<  "WsSiteMapView::treeMatchPath() myPath = "  << myPath << " and rootPath = " << rootPath;
   vPath.push_back(rootPath);
   if ( pNode != m_pTreecurNode )
     while (curNode.get() != 0 && curNode.get()->getParent() ) {
       curNode = curNode.get()->getParent();
-      if ( m_bLogSiteMap )
-        wApp->log("notice") <<  "WsSiteMapView::treeMatchPath() add to vector = "  << myPath;
       vPath.insert(vPath.begin() + 0, myPath);
       myPath = curNode.get()->getPath().string();
       if ( curNode != m_pTreecurNode ) break;
@@ -301,8 +268,6 @@ bool WsSiteMapView::loadTree(WStandardItem* currentItem, NodePtr pNode, gdWFileV
     if ( currentItem->model() == m_pModelTree )
       if ( m_bLogSiteMap )
         wApp->log("notice") <<  "WsSiteMapView::loadTree() m_pModelTree pNode full path =  "  << pNode.get()->getPath().string();
-      else if ( m_bLogSiteMap )
-        wApp->log("notice") <<  "WsSiteMapView::loadTree() m_pModelView pNode full path =  "  << pNode.get()->getPath().string();
   if ( pNode.get()->isDirectory() ) {
     if ( !skipParentDir && (pNode != m_pTreecurNode) && !(m_tbFlags & gdWFileView::tbUseLeftTree) ) {
       std::vector<WStandardItem*> pRow;
@@ -319,8 +284,6 @@ bool WsSiteMapView::loadTree(WStandardItem* currentItem, NodePtr pNode, gdWFileV
     std::vector<NodePtr>& dirNode = tmpNode;
     if ( currentItem->model() == m_pModelTree )  dirNode = pNode.get()->getDirectories();
     else                                        dirNode = pNode.get()->getAll();
-    if ( m_bLogSiteMap )
-      wApp->log("notice") <<  "WsSiteMapView::loadTree() dirNode size =  "  << dirNode.size();
     for (std::vector<NodePtr>::iterator it = dirNode.begin(); it != dirNode.end(); ++it) {
       NodePtr curNode = *it;
       // Items not displayed in view are still visible in the sitemap to the administrator
@@ -329,15 +292,9 @@ bool WsSiteMapView::loadTree(WStandardItem* currentItem, NodePtr pNode, gdWFileV
       // Do not display ws.res directories in the sitemap
       if (curNode.get()->getName() == "ws.res") continue;
       std::string     curPath = m_sRootPath + curNode.get()->getPath().string();
-      if ( m_bLogSiteMap )
-        wApp->log("notice") <<  "WsSiteMapView::loadTree() curPath =  "  << curPath;
       if ( curNode.get()->isDirectory() ) {
-        if ( m_bLogSiteMap )
-          wApp->log("notice") <<  "WsSiteMapView::loadTree() detected directory";
         if ( !loadFolder(currentItem, curPath, curNode) ) return false;
       } else {
-        if ( m_bLogSiteMap )
-          wApp->log("notice") <<  "WsSiteMapView::loadTree() detected file";
         if ( currentItem->model() == m_pModelTree ) continue;
         if ( !loadFile(currentItem, curPath, curNode) ) return false;
       }
@@ -355,9 +312,6 @@ bool WsSiteMapView::loadFolder(WStandardItem* currentItem, const std::string& ne
   newItem->setData("1" + newPath, UserRole); // le path complet
   newItem->setIcon(wApp->theme()->resourcesUrl() + "gdwtcore/Icons/folder.png");
   if ( currentItem->model() == m_pModelTree ) {
-    if ( m_bLogSiteMap )
-      wApp->log("notice") <<  "WsSiteMapView::loadFolder() start with node = "  << curNode.get()->getPath().string();
-    //     newItem->setFlags(newItem->flags() | ItemIsDropEnabled);
     currentItem->appendRow(newItem);
   } else {
     std::vector<WStandardItem*> pRow;
@@ -392,8 +346,6 @@ bool WsSiteMapView::loadFolder(WStandardItem* currentItem, const std::string& ne
 
 bool WsSiteMapView::loadFile(WStandardItem* currentItem, const std::string& currentPath, NodePtr curNode)
 {
-  if ( m_bLogSiteMap )
-    wApp->log("notice") <<  "WsSiteMapView::loadFile() full path =  "  << currentPath;
   long fsize           = curNode.get()->getSize();
   std::string  strSize = boost::lexical_cast<std::string>(fsize);
   std::string  strDate;
@@ -429,14 +381,10 @@ void WsSiteMapView::onTreeSelectionChanged()
   std::string str = asString(idx.data(UserRole)).toUTF8();
   char type = str[0];
   str.erase(0, 1);
-  if ( m_bLogSiteMap )
-    wApp->log("notice") <<  "WsSiteMapView::onTreeSelectionChanged() : type = " << type << " path = " << str.c_str();
   boost::algorithm::replace_all(str, m_sRootPath, m_sSiteMap);
   m_selectedDirectory = str;
   m_selectedFile.clear();
   WsSiteMapItem* pItem = dynamic_cast<WsSiteMapItem*>(m_pModelTree->itemFromIndex(idx));
-  if ( m_bLogSiteMap )
-    wApp->log("notice") <<  "WsSiteMapView::onTreeSelectionChanged() : text = " << pItem->text() << " node string = " << pItem->node()->getPath().string();
   if ( m_tbFlags & gdWFileView::tbUseDummy )
     if ( !loadTree(pItem, pItem->node(), gdWFileView::skipParent) ) return;
   m_pModelView->invisibleRootItem()->removeRows(0, m_pModelView->invisibleRootItem()->rowCount());
@@ -451,8 +399,6 @@ void WsSiteMapView::onTreeExpanded(WModelIndex idx)
   std::string str = asString(idx.data(UserRole)).toUTF8();
   char type = str[0];
   str.erase(0, 1);
-  if ( m_bLogSiteMap )
-    wApp->log("notice") <<  "WsSiteMapView::onTreeExpanded() : type = " << type << " path = " << str.c_str();
   WsSiteMapItem* pItem = dynamic_cast<WsSiteMapItem*>(m_pModelTree->itemFromIndex(idx));
   if ( m_tbFlags & gdWFileView::tbUseDummy ) {
     pItem->removeRows(0, pItem->rowCount());
@@ -472,7 +418,6 @@ void WsSiteMapView::onViewSelectionChanged()
   char type = str[0];
   str.erase(0, 1);
   //  if ( m_bLogSiteMap )
-  wApp->log("notice") <<  "WsSiteMapView::onViewSelectionChanged() : type = " << type << " path = " << str;
   boost::algorithm::replace_first(str, m_sRootPath, m_sSiteMap);
   if ( type == '2' ) {
     m_selectedDirectory.clear();
@@ -503,7 +448,6 @@ void WsSiteMapView::onViewDblClick(WModelIndex idx, WMouseEvent mouseEvent)
   char type = str[0];
   str.erase(0, 1);
   //  if ( m_bLogSiteMap )
-  wApp->log("notice") <<  "WsSiteMapView::onViewDblClick() : type = " << type << " path = " << str;
   boost::algorithm::replace_first(str, m_sRootPath, m_sSiteMap);
   //fprintf(stderr, "onDblclick - Type = %c, Selected path = %s\n", type, str.c_str());
   if ( type == '1' ) {
@@ -511,7 +455,6 @@ void WsSiteMapView::onViewDblClick(WModelIndex idx, WMouseEvent mouseEvent)
   } else {
     m_selectedFile = str;
     //     if ( m_bLogSiteMap )
-    wApp->log("notice") <<  "WsSiteMapView::onViewDblClick() : type = " << type << " path = " << str;
     fileSelected().emit(gdWFileView::doubleClick, m_selectedFile);
   }
 }

@@ -42,13 +42,10 @@ extern "C" {
 WsModNewsLetter::WsModNewsLetter()
   : WsModule()
 {
-  WApplication::instance()->log("notice") << "end ctor of WsModNewsLetter !";
 }
 
 WsModNewsLetter::~WsModNewsLetter()
 {
-  if ( asString(option("debug")) == "true" ) // Todo test is now crash if WsOptions is deleted before ?
-    LOG(DEBUG) << "WsModNewsLetter::~WsModNewsLetter() !";
 }
 
 WWidget* WsModNewsLetter::createContentsMenuBar(WContainerWidget* parent) const
@@ -60,8 +57,6 @@ WWidget* WsModNewsLetter::createContents(WContainerWidget* parent) const
 {
   WsNewsLetter* pWsNewsLetter = new WsNewsLetter(parent);
   pWsNewsLetter->setOptions(options());
-  if ( asString(option("debug")) == "true" )
-    pWsNewsLetter->outOptions("WsModNewsLetter::createContents()");
   return pWsNewsLetter;
 }
 

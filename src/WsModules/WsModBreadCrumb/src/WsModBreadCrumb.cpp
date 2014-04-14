@@ -37,13 +37,10 @@ extern "C" {
 WsModBreadCrumb::WsModBreadCrumb()
   : WsModule()
 {
-  WApplication::instance()->log("notice") << "end ctor of WsModBreadCrumb !";
 }
 
 WsModBreadCrumb::~WsModBreadCrumb()
 {
-  if ( asString(option("debug")) == "true" ) // Todo test is now crash if WsOptions is deleted before ?
-    LOG(DEBUG) << "WsModBreadCrumb::~WsModBreadCrumb() !";
 }
 
 WWidget* WsModBreadCrumb::createContentsMenuBar(WContainerWidget* parent) const
@@ -55,8 +52,6 @@ WWidget* WsModBreadCrumb::createContents(WContainerWidget* parent) const
 {
   WsBreadCrumb* pWsBreadCrumb = new WsBreadCrumb(parent);
   pWsBreadCrumb->setOptions(options());
-  if ( asString(option("debug")) == "true" )
-    pWsBreadCrumb->outOptions("WsModBreadCrumb::createContents()");
   return pWsBreadCrumb;
 }
 

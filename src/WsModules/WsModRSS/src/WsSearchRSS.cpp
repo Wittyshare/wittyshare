@@ -52,10 +52,8 @@ int WsSearchRSS::traverseFile(NodePtr n)
          fn->getPath().extension().string() == ".zip"
        ) )
     return SUCCESS;
-  //  LOG(DEBUG) << "WsSearchRSS :: file modification date is " << fn->getPublishDate() << " for " << fn->getPath();
   /* Vect empty, add the element */
   if (m_vect.size() == 0) {
-    LOG(DEBUG) << "WsSearchRSS :: vect size was 0 adding " << fn->getPath();
     m_vect.push_back(n);
     return SUCCESS;
   }

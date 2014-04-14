@@ -44,12 +44,10 @@ WsMenuImages::WsMenuImages(WContainerWidget* parent)
   : WContainerWidget(parent), m_nStartImage(0), m_nMaxImages(3), m_pTimer(0)
 {
   addStyleClass("WsMenuImages");
-  LOG(DEBUG) << "WsMenuImages::WsMenuImages() !";
 }
 
 WsMenuImages::~WsMenuImages()
 {
-  LOG(DEBUG) << "WsMenuImages::~WsMenuImages() !";
 }
 
 void WsMenuImages::load()
@@ -67,7 +65,6 @@ void WsMenuImages::load()
     m_pTimer->timeout().connect(SLOT(this, WsMenuImages::doTimeout));
     m_pTimer->start();
   }
-  WApplication::instance()->log("notice") << "WsMenuImages::load : end !";
 }
 
 // TODO : voir avec Koen si pas moyen de stocker l'objet, actu 2 x la construction de pImg il faudrait qu'il ne soit pas detruit lors d'1 clear()
@@ -76,7 +73,6 @@ void WsMenuImages::buildVector()
   std::string                   endPath(GlobalConfig::PathToImages); // "/ws.res/images
   WsUser*                       pUser            = WsApp->wsUser();
   std::string                   sWithoutPrefix   = WsApp->WsModules().pathWithoutPrefix(WsApp->internalPath());
-  WApplication::instance()->log("ERROR") << "WsMenuImages::buildVector : sWithoutPrefix!" << sWithoutPrefix;
   NodePtr               startNode        = pUser->getAccessRoot();
   if ( !startNode.get() ) {
     WApplication::instance()->log("ERROR") << "WsMenuImages::buildVector : startNode is NULL !";
@@ -94,31 +90,22 @@ void WsMenuImages::buildVector()
       return;
     }
   }
-  WApplication::instance()->log("notice") << "WsMenuImages::buildVector : startDir = " << startNode.get()->getPath().string() << " and endPath = " << endPath;
   std::vector<NodePtr> dirNode          = startNode.get()->getDirectories();
-  WApplication::instance()->log("notice") << "WsMenuImages::buildVector : directory size : " << dirNode.size();
   for (std::vector<NodePtr>::iterator it = dirNode.begin(); it != dirNode.end(); ++it) {
     NodePtr curNode = *it;
     //    TODO : voir avec Ben
     //    if ( curNode.get()->getProperties().get()->get("global", "in_menu"Images, DefaultProperties::InMenuImages) != "true" ) continue;
     std::string curDir = curNode.get()->getFullPath().string() + endPath;
-    //    WApplication::instance()->log("notice") << "WsMenuImages::buildVector : test curNode fullPath = " << curDir << " title = " << curNode.get()->getDisplayName();
     if ( !boost::filesystem::exists(curDir) ) continue;
-    WApplication::instance()->log("notice") << "WsMenuImages::buildVector : curNode match images path = " << curDir << " title = " << curNode.get()->getDisplayName();
     // TODO : necessaire de passer par le module ? (pour les options ?)
     WsImages2* pImg = new WsImages2(); //dynamic_cast<WsImages2*>(WsApp->WsModules().module("WsModImages2")->createContents());
     pImg->setOptions(options());
-    if ( asString(option("debug")) == "true" )
-      pImg->outOptions("WsMenuImages::buildVector()");
-    WApplication::instance()->log("notice") << "WsMenuImages::buildVector : WsImages2 set images path = " << curNode.get()->getPath().string();
     std::string curPathUrl = curNode.get()->getFullPath().string();
     boost::algorithm::replace_first(curPathUrl, wApp->docRoot(), "");
     pImg->setOption("imagesPath", std::string(curPathUrl + endPath));
-    WApplication::instance()->log("notice") << "WsMenuImages::buildVector : WsImages2 set path = " << std::string(curPathUrl + endPath);
     pImg->build();
     if ( !pImg->count() ) {
       delete pImg;
-      WApplication::instance()->log("notice") << "WsMenuImages::buildVector : WsImages2 has no images path = " << curNode.get()->getPath().string();
       continue;
     }
     m_vDirectories.push_back(curPathUrl + endPath);
@@ -145,15 +132,12 @@ void WsMenuImages::buildMenu()
   if ( maxImg > m_vDirectories.size() ) maxImg = m_vDirectories.size();
   for (int countDir = m_nStartImage; countDir < maxImg; ++countDir) {
     if ( countDir > m_vDirectories.size() ) {
-      WApplication::instance()->log("notice") << "WsMenuImages::buildMenu : OH OH anormal break !!!!";
       break;
     }
     WsImages2* pImg = new WsImages2(); //dynamic_cast<WsImages2*>(WsApp->WsModules().module("WsModImages2")->createContents());
     pImg->setOptions(options());
     pImg->setOption("imagesPath", m_vDirectories[countDir]);
     pImg->setOption("useImageTitle", std::string("true"));
-    if ( asString(option("debug")) == "true" )
-      pImg->outOptions("WsMenuImages::buildVector()");
     pImg->build();
     //    WContainerWidget* cwImage = new WContainerWidget();
     //    std::string title = m_vDisplayNames[countDir];
@@ -181,12 +165,10 @@ void WsMenuImages::setMaxImages(int nMaxImages)
 WsModMenuImages::WsModMenuImages()
   : WsModule()
 {
-  LOG(DEBUG) << "WsModMenuImages::WsModMenuImages() !";
 }
 
 WsModMenuImages::~WsModMenuImages()
 {
-  LOG(DEBUG) << "WsModMenuImages::~WsModMenuImages() !";
 }
 
 WWidget* WsModMenuImages::createContentsMenuBar(WContainerWidget* parent) const

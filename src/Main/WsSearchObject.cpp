@@ -22,7 +22,6 @@ using namespace Wt;
 WsSearchObject::WsSearchObject(WContainerWidget* parent)
   : gdWSearch(parent)
 {
-  wApp->log("notice") << "WsSearchObject::WsSearchObject CTOR";
   m_searchPath = WsLayoutProperties::instance()->get("global", "search_path", "/Search");
   if ( WString::tr("byObjectStyleSheet").narrow() == "true" )
     wApp->useStyleSheet(wApp->theme()->resourcesUrl() + "wittyshare/Css/WsSearchObject.css");
@@ -42,7 +41,6 @@ void WsSearchObject::doSearch(WString sSearch)
   if ( mySearch == "Search" ) return;
   if ( mySearch.size() <  1 ) return;
   wApp->setInternalPath(m_searchPath + "/" + mySearch, true);
-  wApp->log("notice") << "WsSearchObject::doSearch - : " << mySearch;
 }
 
 void WsSearchObject::doFocussed(Wt::WString sSearch)
