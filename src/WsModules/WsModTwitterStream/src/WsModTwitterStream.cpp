@@ -48,7 +48,6 @@ void WsTwitterStream::load()
 WsModTwitterStream::WsModTwitterStream()
   : WsModule()
 {
-  LOG(DEBUG) << "end ctor of WsModTwitterStream !";
 }
 
 WsModTwitterStream::~WsModTwitterStream()
