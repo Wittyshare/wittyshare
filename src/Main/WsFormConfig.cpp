@@ -205,9 +205,11 @@ void WsFormConfig::doLock()
 {
   m_timeLockLeft = WsApp->wsUser()->getLock(m_pNode->getPath().string());
   if (m_timeLockLeft <= 0) {
+    /* node is locked */
     m_pSave->hide();
     m_pLock->hide();
     std::string id = "";
+   /* get the uid of the locked */
     WsApp->wsUser()->isLocked(m_pNode->getPath().string(), id);
     addWidget(new WText("<font color='red'>The file is currently locked by \"" + id + "\". Please try again later</font>"));
     return;

@@ -67,7 +67,7 @@ bool WsTwitterEditorWidget::saveEditor()
   string path = WApplication::instance()->internalPath();
   path = WsApplication::wsInstance()->WsModules().pathWithoutPrefix(path);
   if ( m_cb->checkState() != m_cbState )
-    if ( user->saveProperty(path, "WsModTwitter", "twitter_enable", m_cb->checkState() ? "true" : "false") == FAILURE ) return false;
+    if ( user->saveProperty(path, "WsModTwitter", "twitter_enable", m_cb->checkState() ? "true" : "false") == ErrorCode::Failure ) return false;
   return true;
 }
 

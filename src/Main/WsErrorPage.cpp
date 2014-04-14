@@ -21,6 +21,8 @@ using namespace Wt;
 
 WsErrorPage::WsErrorPage(ErrorCode errorCode, const std::string& path, WsUser* user, const std::string& msg)  : WContainerWidget(0) 
 {
+    addStyleClass("WsErrorPage");
+
     std::string error = "";
     switch(errorCode){
         case Forbidden:

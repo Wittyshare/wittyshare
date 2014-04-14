@@ -63,7 +63,7 @@ WsApplication::WsApplication(const WEnvironment& env)
 void WsApplication::doEndDialogLogon(std::string sUid, std::string pPassword)
 {
   m_pUser = new WsUser(sUid, pPassword, environment().clientAddress());
-  if ( !m_pUser || m_pUser->load() == FAILURE ) {
+  if ( !m_pUser || m_pUser->load() == ErrorCode::Failure ) {
     wApp->log("ERROR") << "WsApplication::doEndDialogLogon - Cannot load user with uid : " << sUid;
     if ( m_pUser )
       delete m_pUser;
@@ -94,11 +94,6 @@ void WsApplication::doEndDialogLogon(std::string sUid, std::string pPassword)
     if ( perms != GlobalConfig::Read && perms != GlobalConfig::ReadWrite)  {
       root()->clear();
       wApp->root()->addWidget(new WsErrorPage(WsErrorPage::Forbidden, truePath,m_pUser, "")); 
-      //wApp->log("ALERT") <<  "WsApplication::doEndDialogLogon() URL not allowed !!! "  << truePath << " with oldInternalPath = " << oldInternalPath << "perms = " << perms;
-      //wApp->redirect("/");
-      // Do not display error because urls from the old website then display an empty page with only Forbidden, and not link.
-      //root()->clear();
-      //root()->addWidget(new WText("<b>Forbidden !</b>"));
       return;
     }
   } else {

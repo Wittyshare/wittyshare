@@ -59,7 +59,7 @@ bool WsZipEditorWidget::saveEditor() const
   string path = WApplication::instance()->internalPath();
   path = WsApplication::wsInstance()->WsModules().pathWithoutPrefix(path);
   if ( m_cb->checkState() != m_bState )
-    if ( user->saveProperty(path, WSMODZIP, ALLOW_ZIP, m_cb->checkState() ? "true" : "false") == FAILURE ) return false;
+    if ( user->saveProperty(path, WSMODZIP, ALLOW_ZIP, m_cb->checkState() ? "true" : "false") == ErrorCode::Failure ) return false;
   return true;
 }
 
@@ -183,7 +183,7 @@ int WsModZip::handleFiles(int t)
   NodePtr accessTree = user->getAccessRoot();
   if (!accessTree.get()) {
     LOG(ERROR) << "WsModZip::handleFiles() AccessRoot is NULL";
-    return FAILURE;
+    return ErrorCode::Failure;
   }
   /* Get the internalPath */
   string path = WApplication::instance()->internalPath();
@@ -191,7 +191,7 @@ int WsModZip::handleFiles(int t)
   /* Get the directory contents */
   NodePtr tmp = accessTree.get()->eatPath(path);
   if (!tmp)
-    return FAILURE;
+    return ErrorCode::Failure;
   vector<NodePtr> contents =   tmp.get()->getAll();
   vector<NodePtr>::iterator it;
   int size = contents.size();
@@ -216,7 +216,7 @@ int WsModZip::handleAll(int t)
   WsUser* user = WsApplication::wsInstance()->wsUser();
   NodePtr accessTree = user->getAccessRoot();
   if (!accessTree.get()) {
-    return FAILURE;
+    return ErrorCode::Failure;
   }
   /* Get the internalPath */
   string path = WApplication::instance()->internalPath();
@@ -224,7 +224,7 @@ int WsModZip::handleAll(int t)
   /* Get the directory contents */
   NodePtr tmp = accessTree.get()->eatPath(path);
   if (!tmp.get())
-    return FAILURE;
+    return ErrorCode::Failure;
   vector<NodePtr> contents =   tmp.get()->getAll();
   vector<NodePtr>::iterator it;
   int size = contents.size();

@@ -31,6 +31,7 @@
 
 #include "WsSiteMapView.h"
 #include "WsApplication.h"
+#include "WsErrorPage.h"
 
 using namespace Wt;
 
@@ -59,7 +60,6 @@ WsSiteMapView::WsSiteMapView(gdwtcore::viewType nViewType, gdWFileView::tbFlags 
     m_pTb(0), m_bOnDataChanged(false), m_pMenu(0), m_bOnRename(false), m_bLogSiteMap(false), m_pMb(0)
 
 {
-  //  if ( WsLayoutProperties::instance()->get("global", "by_object_stylesheet", "false") == "true" )
   if ( WString::tr("byObjectStyleSheet").narrow() == "true" )
     wApp->useStyleSheet(wApp->theme()->resourcesUrl() + "wittyshare/Css/WsSiteMapView.css");
   addStyleClass("WsSiteMapView");
@@ -70,7 +70,6 @@ WsSiteMapView::WsSiteMapView(gdwtcore::viewType nViewType, gdWFileView::tbFlags 
     int nTmp = gdWFileView::tbDefault | gdWFileView::tbUseDummy;
     m_tbFlags = (gdWFileView::tbFlags) nTmp;
   }
-  //  resize(WLength(100, WLength::Percentage), WLength(100, WLength::Percentage));
   setOverflow(WContainerWidget::OverflowHidden);
   WsUser*         pUser          = WsApp->wsUser();
   m_sRootPath    = pUser->getRootPath();                        // /var/www/demo_site
@@ -185,9 +184,11 @@ void WsSiteMapView::setRelativePath(const std::string& relativePath)
     str = "/";
   WsUser*         pUser          = WsApp->wsUser();
   NodePtr node           = m_pTreecurNode.get()->eatPath(str);
-  //TODO FIXME redirect to not found page here
-  if (!node.get())
+  if (!node.get()){
+    wApp->root()->clear();
+    wApp->root()->addWidget(new WsErrorPage(WsErrorPage::NotFound, str,pUser, "")); 
     return;
+  }
   init(node);
 }
 
