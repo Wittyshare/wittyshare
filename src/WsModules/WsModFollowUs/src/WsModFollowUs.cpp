@@ -28,7 +28,6 @@
 extern "C" {
   void WsModFollowUsInit(void)
   {
-    fprintf(stderr, "preparing required libraries : libwt.so! %s\n", dlerror());
     void* hndl = dlopen("libwt.so", RTLD_NOW | RTLD_GLOBAL);
     if ( hndl == NULL ) {
       fprintf(stderr, "cannot load libwt.so shared library! %s\n", dlerror());

@@ -42,7 +42,6 @@ using namespace Wt;
 extern "C" {
   void WsModDirectoryView2Init(void)
   {
-    fprintf(stderr, "preparing required libraries : libwt.so!\n");
     void* hndl = dlopen("libwt.so", RTLD_NOW | RTLD_GLOBAL);
     if ( hndl == NULL ) {
       fprintf(stderr, "cannot load wt.so shared library! %s\n", dlerror());

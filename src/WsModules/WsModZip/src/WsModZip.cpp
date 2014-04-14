@@ -22,7 +22,6 @@
 extern "C" {
   void WsModZipInit(void)
   {
-    fprintf(stderr, "preparing required libraries : libarchive.so!\n");
     void* hndl = dlopen("libarchive.so", RTLD_NOW | RTLD_GLOBAL);
     if ( hndl == NULL ) {
       fprintf(stderr, "cannot load libarchive.so shared library! %s\n", dlerror());

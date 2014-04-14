@@ -22,7 +22,6 @@
 extern "C" {
   void WsModImages2Init(void)
   {
-    fprintf(stderr, "WsModImages2Init : preparing required libraries ==> libwt.so! %s\n", dlerror());
     void* hndl = dlopen("libwt.so", RTLD_NOW | RTLD_GLOBAL);
     if ( hndl == NULL ) {
       fprintf(stderr, "WsModImages2Init : cannot load libwt.so shared library! %s\n", dlerror());

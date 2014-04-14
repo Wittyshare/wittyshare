@@ -83,8 +83,6 @@ void WsContent::buildFileUpload(const std::string& path)
 
 void WsContent::doEditPage(std::string path)
 {
-  // if ( m_bLogContent )
-  wApp->log("notice") << "WsContent::doEditPage " << path;
   std::string newPath = path;
   boost::algorithm::replace_first(newPath, "/Edit", "");
   boost::algorithm::replace_first(newPath, "/SiteMap", "");
@@ -128,7 +126,6 @@ void WsContent::buildSiteMap()
 
 void WsContent::siteMapChanged(std::string newPath)
 {
-  wApp->log("notice") << "WsContent::siteMapChanged = " << newPath;
   if ( !m_pSiteMapView )
     buildSiteMap();
   m_pSiteMapView->setRelativePath(newPath);  // "/SiteMap/...
@@ -195,8 +192,6 @@ void WsContent::setPath(std::string newPath)
 {
   std::string sPathWithoutPrefix = WsApp->WsModules().pathWithoutPrefix(newPath);
   boost::algorithm::replace_all(sPathWithoutPrefix, "&amp;",  "&");
-  if ( m_bLogContent )
-    wApp->log("notice") <<  "WsContent::setPath() : newPath = " << newPath << ", pathWithoutPrefix : " << sPathWithoutPrefix;
   if ( newPath == "/" ) newPath = WsApp->homePage();
   WsUser*        pUser    = WsApp->wsUser();
   boost::filesystem::path p(newPath);

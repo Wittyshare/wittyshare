@@ -24,7 +24,6 @@ WsLogo::WsLogo(WContainerWidget* parent)
   gdImageProperties imgProp = gdImage_size(wApp->docRoot() + curImgUrl);
   setWidth(WLength(imgProp.width, WLength::Pixel));
   setHeight(WLength(imgProp.height, WLength::Pixel));
-  wApp->log("notice") << "WsLogo::WsLogo() logo = " << imageRef();
   clicked().connect(SLOT(this, WsLogo::doLogoClicked));
 }
 

@@ -22,7 +22,6 @@
 extern "C" {
   void WsModBannersInit(void)
   {
-    fprintf(stderr, "WsModBannersInit : preparing required libraries ==> libwt.so! %s\n", dlerror());
     void* hndl = dlopen("libwt.so", RTLD_NOW | RTLD_GLOBAL);
     if ( hndl == NULL ) {
       fprintf(stderr, "WsModBannersInit : cannot load libwt.so shared library! %s\n", dlerror());
