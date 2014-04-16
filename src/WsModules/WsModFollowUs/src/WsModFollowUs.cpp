@@ -70,10 +70,10 @@ void WsFollowUs::load()
   pAnchorTwitter->addStyleClass("WsTwitter");
   pAnchorTwitter->setOption("debug", std::string("true"));
   pAnchorTwitter->setOption("linkType", std::string("Url"));
-  pAnchorTwitter->setOption("link", std::string("https://twitter.com/Eurofer_eu"));
-  pAnchorTwitter->setOption("text", std::string("Follow us"));
+  pAnchorTwitter->setOption("link", asString(option("account")));
+  pAnchorTwitter->setOption("text", asString(option("text")));
   pAnchorTwitter->setOption("icon", std::string(rootUrl + "/ws.res/icones/twitter.png"));
-  pAnchorTwitter->setOption("iconText", std::string("Eurofer on twitter"));
+  pAnchorTwitter->setOption("iconText", asString(option("iconText")));
   pAnchorTwitter->setOption("target", std::string("TargetNewWindow"));
   addWidget(pAnchorTwitter);
 }

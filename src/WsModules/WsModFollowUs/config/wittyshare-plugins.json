@@ -2,11 +2,17 @@
  {
   "modules" :
     {
-     "WsModFollowUs" :
-       {
-        "name"      : "WsModFollowUs",
-        "soName"    : "libWsModFollowUs.so",
-       }
-    }
+        "WsModFollowUs" :                                                                                                                                                     
+        {
+            "moduleName" : "WsModFollowUs",
+            "soName"    : "libWsModFollowUs.so",
+            "options" :
+            {
+                "debug"     : "false",
+                "account" : "https://twitter.com/Eurofer_eu",
+                "iconText" : "Eurofer on twitter",
+                "text" : "Follow us"
+            }
+        }
  }
 

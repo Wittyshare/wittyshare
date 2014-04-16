@@ -172,7 +172,7 @@ void WsModTwitter::handleTwitterClick()
   //  twitterUrl += Wt::Utils::urlEncode(sFullUrl);
   twitterUrl += sCurl;
   twitterUrl += "&via=";
-  twitterUrl += "EUROFER_eu";
+  twitterUrl += asString(option("account")).narrow();
   m_buttonReTweet->setLink(twitterUrl);
 }
 
