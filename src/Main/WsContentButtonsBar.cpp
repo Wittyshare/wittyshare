@@ -141,9 +141,17 @@ void WsContentButtonsBar::doEndFolderNew()
     /* Remove useless / */
     if (currentPath == "/")
       currentPath = "";
+
+    WsUser* pUser = WsApp->wsUser();
+    //Test if path is a file or a directory
+    NodePtr pNode =  pUser->getAccessRoot()->eatPath(currentPath);
+    if(!pNode.get()) return; //TODO ?
+    
+    if(!pNode.get()->isDirectory())
+        currentPath = path(currentPath).parent_path().string();
+
     std::string path2Create = currentPath + "/" + newName;
     // TODO : test internalPath is directory and if no, replace file name by newName
-    WsUser* pUser = WsApp->wsUser();
     pUser->createNode(path2Create, WsUser::Directory);
     setNewInternalPath("/Edit" , path2Create, true);
   }
@@ -162,10 +170,17 @@ void WsContentButtonsBar::doEndFileNew()
     if ( pathName.extension().string() == "" ) newName += ".fhtml";
     std::string currentPath = WsApp->WsModules().pathWithoutPrefix(wApp->internalPath());
     boost::algorithm::replace_all(currentPath, "&amp;",  "&");
+    WsUser* pUser = WsApp->wsUser();
+    //Test if path is a file or a directory
+    NodePtr pNode =  pUser->getAccessRoot()->eatPath(currentPath);
+    if(!pNode.get()) return; //TODO ?
+    
+    if(!pNode.get()->isDirectory())
+        currentPath = path(currentPath).parent_path().string();
+
     std::string path2Create = currentPath + "/" + newName;
     boost::algorithm::replace_all(path2Create, "//",  "/");
     // TODO : test internalPath is directory and if no, replace file name by newName
-    WsUser* pUser = WsApp->wsUser();
     pUser->createNode(path2Create, WsUser::File);
     setNewInternalPath("/Edit" , path2Create, true);
   }
@@ -204,16 +219,18 @@ void WsContentButtonsBar::doFileUpload(gdToolbarItem* pTbItem, WMouseEvent ev)
   WsUser*           pUser                 = WsApp->wsUser();
   std::string       sDocumentRoot         = pUser->getRootPath(); // /var/www/demo_site
   std::string       fullPath              = sDocumentRoot + wApp->internalPath();
+  std::string       currentPath           = wApp->internalPath();
   boost::algorithm::replace_all(fullPath, "&amp;",  "&");
-  try {
-    if ( boost::filesystem::is_directory(fullPath) ) {
-    }
-  } catch (boost::filesystem::filesystem_error& e) {
-    wApp->log("notice") << " WsContentButtonsBar::doFileUpload is_directory " << e.what();
-    return;
-  }
+    //Test if path is a file or a directory
+  
+  NodePtr pNode =  pUser->getAccessRoot()->eatPath(wApp->internalPath());
+  if(!pNode.get()) return; //TODO ?
+    
+  if(!pNode.get()->isDirectory())
+      currentPath = path(currentPath).parent_path().string();
+
   if ( pUser->isAdministrator() || pUser->isEditor() ) {
-    setNewInternalPath(pTbItem->url() , wApp->internalPath(), true);
+    setNewInternalPath(pTbItem->url() , currentPath, true);
   }
 }
 

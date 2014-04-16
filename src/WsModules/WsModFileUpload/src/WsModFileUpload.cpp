@@ -115,6 +115,7 @@ void WsFileUpload::doUploaded()
     boost::algorithm::replace_all(newNode, "/Edit", "");
     boost::algorithm::replace_first(newNode, "//", "/");
     boost::algorithm::replace_first(sNewFile, "//", "/");
+    LOG(DEBUG)<<"WsFileUpload::doUploaded(): will now insert node "<<newNode;
     pUser->createNode(newNode, WsUser::File);
     m_dialog->hide();
     delete m_dialog;
