@@ -45,6 +45,8 @@ WsApplication::WsApplication(const WEnvironment& env)
   // On recherche le theme par dans la configuration, si rien n'est configuré on prend le theme polised par defaut.
   wApp->setCssTheme(WsLayoutProperties::instance()->get("global", "css_theme", "polished"));
   wApp->useStyleSheet(wApp->theme()->resourcesUrl() + "wittyshare/Css/wittyshare.css");
+  if(boost::filesystem::exists(wApp->docRoot() + "/wt/resources/js/functions.js"))
+          wApp->require(wApp->resourcesUrl() + "js/functions.js");
   if ( isPublicSite ) {
     bool enableLoginWindow = WsGlobalProperties::instance()->get("global", "login_window", "true") == "true" ? true : false;
     if (enableLoginWindow) {
