@@ -88,12 +88,19 @@ void WsApplication::doEndDialogLogon(std::string sUid, std::string pPassword)
     // TODO : Boucler par module
     int perms = m_pUser->getPermissions(truePath);
     if ( perms == ErrorCode::NotLogged ) {
-      wApp->log("ALERT") <<  "WsApplication::doEndDialogLogon() User is not logged " ;
-      wApp->redirect("/");
+      root()->clear();
+      wApp->root()->addWidget(new WsErrorPage(WsErrorPage::UnAuthorized, truePath,m_pUser, "", true)); 
+      return;
     }
+    if( perms == ErrorCode::NotFound) {
+      root()->clear();
+      wApp->root()->addWidget(new WsErrorPage(WsErrorPage::NotFound, truePath,m_pUser, "", true)); 
+      return;
+    }
+
     if ( perms != GlobalConfig::Read && perms != GlobalConfig::ReadWrite)  {
       root()->clear();
-      wApp->root()->addWidget(new WsErrorPage(WsErrorPage::Forbidden, truePath,m_pUser, "")); 
+      wApp->root()->addWidget(new WsErrorPage(WsErrorPage::Forbidden, truePath,m_pUser, "", true)); 
       return;
     }
   } else {
@@ -218,7 +225,7 @@ void WsApplication::setTemplate(const std::string& sPageOrig)
       m_pContent = 0; // le template doit prevoir la creation du content
       m_pImages = 0;
       WsTemplate* pTemplate = new WsTemplate(sTemplate, sPath);
-      bool bUseLayout = false; // TODO : Put this option in the layout.json
+      bool bUseLayout = WsLayoutProperties::instance()->get("global", "useLayout", "false") == "true" ? true : false; 
       if ( bUseLayout ) {
         WVBoxLayout* vbox = new WVBoxLayout();
         vbox->setContentsMargins(0, 0, 0, 0);

@@ -59,10 +59,17 @@ void WsContentButtonsBar::doMenuEditPage(gdToolbarItem* pTbItem, WMouseEvent ev)
 {
   std::string str =  pTbItem->url() + wApp->internalPath();
   std::string id = "";
-  int ret = WsApp->wsUser()->isLocked(wApp->internalPath(), id);
-  if (ret != 1) {
-    WMessageBox::show("Warning", "The file is currently locked by \"" + id + "\". Please try again later.", Ok);
-    return;
+  WsUser* pUser = WsApp->wsUser();
+  //Test if path is a file or a directory
+  NodePtr pNode =  pUser->getAccessRoot()->eatPath(wApp->internalPath());
+  if(!pNode.get()) return;
+    
+  if(!pNode.get()->isDirectory()){
+      int ret = WsApp->wsUser()->isLocked(wApp->internalPath(), id);
+      if (ret != 1) {
+          WMessageBox::show("Warning", "The file is currently locked by \"" + id + "\". Please try again later.", Ok);
+          return;
+      }
   }
   setNewInternalPath(pTbItem->url(),  WsApp->WsModules().pathWithoutPrefix(wApp->internalPath()), true);
 }
@@ -145,13 +152,12 @@ void WsContentButtonsBar::doEndFolderNew()
     WsUser* pUser = WsApp->wsUser();
     //Test if path is a file or a directory
     NodePtr pNode =  pUser->getAccessRoot()->eatPath(currentPath);
-    if(!pNode.get()) return; //TODO ?
+    if(!pNode.get()) return;
     
     if(!pNode.get()->isDirectory())
         currentPath = path(currentPath).parent_path().string();
 
     std::string path2Create = currentPath + "/" + newName;
-    // TODO : test internalPath is directory and if no, replace file name by newName
     pUser->createNode(path2Create, WsUser::Directory);
     setNewInternalPath("/Edit" , path2Create, true);
   }
@@ -173,14 +179,13 @@ void WsContentButtonsBar::doEndFileNew()
     WsUser* pUser = WsApp->wsUser();
     //Test if path is a file or a directory
     NodePtr pNode =  pUser->getAccessRoot()->eatPath(currentPath);
-    if(!pNode.get()) return; //TODO ?
+    if(!pNode.get()) return;
     
     if(!pNode.get()->isDirectory())
         currentPath = path(currentPath).parent_path().string();
 
     std::string path2Create = currentPath + "/" + newName;
     boost::algorithm::replace_all(path2Create, "//",  "/");
-    // TODO : test internalPath is directory and if no, replace file name by newName
     pUser->createNode(path2Create, WsUser::File);
     setNewInternalPath("/Edit" , path2Create, true);
   }
@@ -224,7 +229,7 @@ void WsContentButtonsBar::doFileUpload(gdToolbarItem* pTbItem, WMouseEvent ev)
     //Test if path is a file or a directory
   
   NodePtr pNode =  pUser->getAccessRoot()->eatPath(wApp->internalPath());
-  if(!pNode.get()) return; //TODO ?
+  if(!pNode.get()) return;
     
   if(!pNode.get()->isDirectory())
       currentPath = path(currentPath).parent_path().string();

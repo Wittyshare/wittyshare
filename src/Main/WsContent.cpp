@@ -202,16 +202,17 @@ void WsContent::setPath(std::string newPath)
   }
   int perms = pUser->getPermissions(sPathWithoutPrefix);
   if ( perms == ErrorCode::NotLogged ) {
-      wApp->log("ALERT") <<  "WsApplication::doEndDialogLogon() User is not logged " ;
-      wApp->redirect("/");
-    return;
+      addWidget(new WsErrorPage(WsErrorPage::UnAuthorized, p.string(), pUser)); 
+      return;
   }
   if ( perms != GlobalConfig::Read && perms != GlobalConfig::ReadWrite) {
     clear();
-    if(perms == ErrorCode::NotFound)
+    if(perms == ErrorCode::NotFound){
         addWidget(new WsErrorPage(WsErrorPage::NotFound, p.string(), pUser)); 
-    else 
+    }
+    else{ 
         addWidget(new WsErrorPage(WsErrorPage::Forbidden, p.string(), pUser)); 
+    }
     return;
   }
   if ( newPath == "/Logo" ) {
@@ -262,11 +263,14 @@ void WsContent::selectWidget(std::string path)
   if ( m_bLogContent )
     wApp->log("notice") << "WsContent::selectWidget :  path = " << path << " name = " << strName << " extension = " << strExt << " system path = " << sysPath;
   // This extension is mainly created for allowing text in a image without a link
-  if ( strExt == ".nolink" ) return;
+  if ( strExt == ".nolink" ) {
+      addWidget(new WsErrorPage(WsErrorPage::Error, path, 0, "Extension not allowed", true));
+      return;
+  }
   // load the file in memory for some file format
   if ( strExt == ".fhtml" ) {
     if ( !gdcore_file_content2string(sysPath.c_str(), fileContent) ) {
-      addWidget(new WText("WsContent::selectWidget : Cannot open this url : = " + path));
+        addWidget(new WsErrorPage(WsErrorPage::NotFound, path, 0, "Cannot open URL", true));
       if ( m_bLogContent )
         wApp->log("notice") << "WsContent::selectWidget : cannot open : " << sysPath;
       return;
@@ -401,7 +405,7 @@ void WsContent::selectWidget(std::string path)
     }
   }
   clear();
-  addWidget(new WText("WsContent::selectWidget : Unknown extension = " + path));
+  addWidget(new WsErrorPage(WsErrorPage::Error, path, 0, "Unknown extension", true)); 
 }
 
 void WsContent::doSiteMapItemSelected(gdWFileView::signalType sigType, std::string selectedPath)
