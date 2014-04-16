@@ -353,7 +353,7 @@ void WsFormConfig::doSave()
   if ( m_sName != sName )
     pUser->renameNode(oldName, newName);
   //  wApp->setInternalPath(m_pNode->getPath().string(), true);
-  wApp->setInternalPath(newName, true);
   WsApp->wsUser()->putLock(m_pNode->getPath().string());
+  wApp->setInternalPath(newName, true);
 }
 
