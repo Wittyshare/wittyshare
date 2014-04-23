@@ -351,23 +351,6 @@ void WsContent::selectWidget(std::string path)
   if you prefer I can create a small example ...
   ooops ! must run !
   */
-  // Pdf TODO : tester ce code avec des pdf devant s'afficher dans la vue
-  if ( strExt == ".pdf" ) {
-    if ( m_bLogContent )
-      wApp->log("notice") << "WsContent::selectWidget : render a " << strExt << " file : " << sysPath;
-    //     if ( !allowedPath(userUID, syspath) ) return;
-    clear();
-    WsApp->hideImages(false);
-    addWidget(new WText("Download file : " + path + " ..."));
-    return wApp->redirect(m_sRelativeDocumentRoot + path);
-    //             WAnchor* m_anchor = new WAnchor(this);
-    //             m_anchor->setTarget(Wt::TargetNewWindow);
-    //             m_anchor->setText(path);
-    //             fileResource* pRes = new fileResource(sysPath, this);
-    //             m_anchor->setRef(pRes->generateUrl());
-    //             m_anchor->clicked().emit(WMouseEvent());
-    //             return;
-  }
   if ( strExt == ".rss" ) {
     if ( m_bLogContent )
       wApp->log("notice") << "WsContent::selectWidget : render a " << strExt << " file : " << sysPath;
@@ -404,8 +387,25 @@ void WsContent::selectWidget(std::string path)
       return;
     }
   }
+  // Pdf TODO : tester ce code avec des pdf devant s'afficher dans la vue
+  if ( strExt == ".pdf" ) {
+    if ( m_bLogContent )
+      wApp->log("notice") << "WsContent::selectWidget : render a " << strExt << " file : " << sysPath;
+    //     if ( !allowedPath(userUID, syspath) ) return;
+    clear();
+    WsApp->hideImages(false);
+    addWidget(new WText("Download file : " + path + " ..."));
+    return wApp->redirect(m_sRelativeDocumentRoot + path);
+    //             WAnchor* m_anchor = new WAnchor(this);
+    //             m_anchor->setTarget(Wt::TargetNewWindow);
+    //             m_anchor->setText(path);
+    //             fileResource* pRes = new fileResource(sysPath, this);
+    //             m_anchor->setRef(pRes->generateUrl());
+    //             m_anchor->clicked().emit(WMouseEvent());
+    //             return;
+  }
   clear();
-  addWidget(new WsErrorPage(WsErrorPage::Error, path, 0, "Unknown extension", true)); 
+  addWidget(new WsErrorPage(WsErrorPage::Error, path, 0, "Unknown extension", false)); 
 }
 
 void WsContent::doSiteMapItemSelected(gdWFileView::signalType sigType, std::string selectedPath)

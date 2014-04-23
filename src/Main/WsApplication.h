@@ -8,6 +8,7 @@
 #define _WsApplication_H_
 
 #include <Wt/WTemplate>
+#include <Wt/WEvent>
 
 #include <User/WsUser.h>
 
@@ -44,6 +45,7 @@ public slots :
   void                         doPathChanged(std::string newPath);
   void                         doEndDialogLogon(std::string sUid, std::string pPassword);
   void                         googleAnalyticsLogger(std::string newPath);
+  void  notify(const Wt::WEvent& event);
 
 private :
   WsUser*                      m_pUser;

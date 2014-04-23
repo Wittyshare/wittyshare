@@ -37,7 +37,7 @@ WsErrorPage::WsErrorPage(ErrorCode errorCode, const std::string& path, WsUser* u
             break;
         case NotFound:
             addWidget(new WText("<h1>URL NOT FOUND!</h1>"));
-            error = "The URL "+ path + " is not found" ;
+            error = "The URL "+ path + " was not found on the server" ;
             break;
         case Error:
             addWidget(new WText("<h1>ERROR!</h1>"));

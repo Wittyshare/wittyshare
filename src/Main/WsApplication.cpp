@@ -62,6 +62,15 @@ WsApplication::WsApplication(const WEnvironment& env)
     doEndDialogLogon("", "");
 }
 
+void WsApplication::notify(const Wt::WEvent& event)
+{
+    try{
+        WApplication::notify(event);
+    }catch(std::exception& e){
+        wApp->log("ERROR") << "WsApplication::notify() : Exception caught" ;
+    }
+}
+
 void WsApplication::doEndDialogLogon(std::string sUid, std::string pPassword)
 {
   m_pUser = new WsUser(sUid, pPassword, environment().clientAddress());

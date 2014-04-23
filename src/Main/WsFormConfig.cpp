@@ -120,10 +120,19 @@ WsFormConfig::WsFormConfig(NodePtr pNode, WsModulesLoader& rMl, WContainerWidget
   new WText("Template", pTable->elementAt(iRow, 0));
   m_pCBBTemplates = new Wt::WComboBox(pTable->elementAt(iRow, 2));
   std::string sTemplate = pNode.get()->getProperties().get()->get("global", "template", "stdSubPage.tpl");
-  // TODO : boucler avec les droits ? sur /.config/templates/*.tpl
+    
   std::vector<std::string> vTemplates;
-  vTemplates.push_back("root.tpl");
-  vTemplates.push_back("stdSubPage.tpl");
+  directory_iterator endItr;
+  /* We iterate on all the entries of the directory */
+  path p(pUser->getRootPath() / GlobalConfig::PathToTemplates);
+  if(exists(p)){
+      for (directory_iterator dItr(p); dItr != endItr; ++dItr) {
+          if(dItr->path().extension().string() == ".tpl")
+              vTemplates.push_back(dItr->path().filename().string());
+      }
+  }
+
+
   for ( int countTemplates = 0; countTemplates < vTemplates.size(); ++countTemplates) {
     m_pCBBTemplates->addItem(vTemplates[countTemplates]);
     if ( vTemplates[countTemplates] == sTemplate ) {
