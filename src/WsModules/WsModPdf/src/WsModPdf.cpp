@@ -38,9 +38,14 @@ void WsPdf::load()
   setOverflow(WContainerWidget::OverflowAuto);
   std::string  p1 = Wt::WApplication::instance()->internalPath();
   std::string  p(m_sDiffPath + p1);
+  WText* canvas = new WText();
+  canvas->setTextFormat(XHTMLUnsafeText);
+  canvas->setText("<canvas id='the-canvas' style='border:1px solid black;'/>");
+  addWidget(canvas);
+
   WText* text = new WText();
   text->setTextFormat(XHTMLUnsafeText);
-  text->setText("<canvas id='the-canvas' style='border:1px solid black;'/><button id='prev' onclick='goPrevious()'>Previous</button> <button id='next' onclick='goNext()'>Next</button>");
+  text->setText("<button id='prev' onclick='goPrevious()'>Previous</button> <button id='next' onclick='goNext()'>Next</button>");
   addWidget(text);
   WText* pageCounter = new WText();
   pageCounter->setTextFormat(XHTMLUnsafeText);
