@@ -1,0 +1,3 @@
+[submodule "src/WsModules/WsModPdf/resources/pdfjs"]
+	path = src/WsModules/WsModPdf/resources/pdfjs
+	url = https://github.com/mozilla/pdf.js.git
