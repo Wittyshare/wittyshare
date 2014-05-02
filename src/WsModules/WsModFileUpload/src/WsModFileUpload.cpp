@@ -38,7 +38,7 @@ extern "C" {
 WsFileUpload::WsFileUpload(WContainerWidget* parent)
   : WContainerWidget(parent), m_pFU(0)
 {
- // addStyleClass("WsFileUpload");
+  // addStyleClass("WsFileUpload");
 }
 
 void WsFileUpload::load()
@@ -115,7 +115,7 @@ void WsFileUpload::doUploaded()
     boost::algorithm::replace_all(newNode, "/Edit", "");
     boost::algorithm::replace_first(newNode, "//", "/");
     boost::algorithm::replace_first(sNewFile, "//", "/");
-    LOG(DEBUG)<<"WsFileUpload::doUploaded(): will now insert node "<<newNode;
+    LOG(DEBUG) << "WsFileUpload::doUploaded(): will now insert node " << newNode;
     pUser->createNode(newNode, WsUser::File);
     m_dialog->hide();
     delete m_dialog;

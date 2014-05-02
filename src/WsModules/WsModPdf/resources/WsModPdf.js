@@ -1,6 +1,3 @@
-//
-// Get page info from document, resize canvas accordingly, and render page
-//
 
 var pageNum = 1;
 var pdfjs = null;
@@ -26,7 +23,7 @@ function renderPage(num) {
             canvas.width = viewport.width;
             var renderContext = {
                 canvasContext: context,
-        viewport: viewport
+            viewport: viewport
             };
             page.render(renderContext);
         });

@@ -184,9 +184,9 @@ void WsSiteMapView::setRelativePath(const std::string& relativePath)
     str = "/";
   WsUser*         pUser          = WsApp->wsUser();
   NodePtr node           = m_pTreecurNode.get()->eatPath(str);
-  if (!node.get()){
+  if (!node.get()) {
     wApp->root()->clear();
-    wApp->root()->addWidget(new WsErrorPage(WsErrorPage::NotFound, str,pUser, "")); 
+    wApp->root()->addWidget(new WsErrorPage(WsErrorPage::NotFound, str, pUser, ""));
     return;
   }
   init(node);
@@ -201,7 +201,7 @@ void WsSiteMapView::init(NodePtr pNode)
   if ( m_tbFlags & gdWFileView::tbUseLeftTree )
     treeMatchPath(pNode);
   else if ( !loadTree(m_pModelView->invisibleRootItem(), pNode, gdWFileView::noSkipParent) ) {
-      wApp->log("error") <<  "WsSiteMapView::init() return with bad loadTree !!! ";
+    wApp->log("error") <<  "WsSiteMapView::init() return with bad loadTree !!! ";
     return;
   }
   m_selectedDirectory = m_sRootSiteMap + pNode.get()->getPath().string();

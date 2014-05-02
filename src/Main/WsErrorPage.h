@@ -11,18 +11,18 @@
 
 class WsErrorPage : public Wt::WContainerWidget {
 public :
-    enum ErrorCode{
-        UnAuthorized = 401,
-        Forbidden = 403,
-        NotFound = 404,
-        Error = 500
-    };
+  enum ErrorCode {
+    UnAuthorized = 401,
+    Forbidden = 403,
+    NotFound = 404,
+    Error = 500
+  };
 
-    WsErrorPage(ErrorCode errorCode, const std::string& path, WsUser* user = 0, const std::string& msg="", bool redirect=false);
+  WsErrorPage(ErrorCode errorCode, const std::string& path, WsUser* user = 0, const std::string& msg = "", bool redirect = false);
   ~WsErrorPage();
 
-  private slots:
-      void doRedirect();
+private slots:
+  void doRedirect();
 };
 
 #endif

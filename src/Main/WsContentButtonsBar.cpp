@@ -62,14 +62,13 @@ void WsContentButtonsBar::doMenuEditPage(gdToolbarItem* pTbItem, WMouseEvent ev)
   WsUser* pUser = WsApp->wsUser();
   //Test if path is a file or a directory
   NodePtr pNode =  pUser->getAccessRoot()->eatPath(wApp->internalPath());
-  if(!pNode.get()) return;
-    
-  if(!pNode.get()->isDirectory()){
-      int ret = WsApp->wsUser()->isLocked(wApp->internalPath(), id);
-      if (ret != 1) {
-          WMessageBox::show("Warning", "The file is currently locked by \"" + id + "\". Please try again later.", Ok);
-          return;
-      }
+  if (!pNode.get()) return;
+  if (!pNode.get()->isDirectory()) {
+    int ret = WsApp->wsUser()->isLocked(wApp->internalPath(), id);
+    if (ret != 1) {
+      WMessageBox::show("Warning", "The file is currently locked by \"" + id + "\". Please try again later.", Ok);
+      return;
+    }
   }
   setNewInternalPath(pTbItem->url(),  WsApp->WsModules().pathWithoutPrefix(wApp->internalPath()), true);
 }
@@ -148,15 +147,12 @@ void WsContentButtonsBar::doEndFolderNew()
     /* Remove useless / */
     if (currentPath == "/")
       currentPath = "";
-
     WsUser* pUser = WsApp->wsUser();
     //Test if path is a file or a directory
     NodePtr pNode =  pUser->getAccessRoot()->eatPath(currentPath);
-    if(!pNode.get()) return;
-    
-    if(!pNode.get()->isDirectory())
-        currentPath = path(currentPath).parent_path().string();
-
+    if (!pNode.get()) return;
+    if (!pNode.get()->isDirectory())
+      currentPath = path(currentPath).parent_path().string();
     std::string path2Create = currentPath + "/" + newName;
     pUser->createNode(path2Create, WsUser::Directory);
     setNewInternalPath("/Edit" , path2Create, true);
@@ -179,11 +175,9 @@ void WsContentButtonsBar::doEndFileNew()
     WsUser* pUser = WsApp->wsUser();
     //Test if path is a file or a directory
     NodePtr pNode =  pUser->getAccessRoot()->eatPath(currentPath);
-    if(!pNode.get()) return;
-    
-    if(!pNode.get()->isDirectory())
-        currentPath = path(currentPath).parent_path().string();
-
+    if (!pNode.get()) return;
+    if (!pNode.get()->isDirectory())
+      currentPath = path(currentPath).parent_path().string();
     std::string path2Create = currentPath + "/" + newName;
     boost::algorithm::replace_all(path2Create, "//",  "/");
     pUser->createNode(path2Create, WsUser::File);
@@ -226,14 +220,11 @@ void WsContentButtonsBar::doFileUpload(gdToolbarItem* pTbItem, WMouseEvent ev)
   std::string       fullPath              = sDocumentRoot + wApp->internalPath();
   std::string       currentPath           = wApp->internalPath();
   boost::algorithm::replace_all(fullPath, "&amp;",  "&");
-    //Test if path is a file or a directory
-  
+  //Test if path is a file or a directory
   NodePtr pNode =  pUser->getAccessRoot()->eatPath(wApp->internalPath());
-  if(!pNode.get()) return;
-    
-  if(!pNode.get()->isDirectory())
-      currentPath = path(currentPath).parent_path().string();
-
+  if (!pNode.get()) return;
+  if (!pNode.get()->isDirectory())
+    currentPath = path(currentPath).parent_path().string();
   if ( pUser->isAdministrator() || pUser->isEditor() ) {
     setNewInternalPath(pTbItem->url() , currentPath, true);
   }

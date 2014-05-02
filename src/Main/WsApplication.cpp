@@ -45,8 +45,8 @@ WsApplication::WsApplication(const WEnvironment& env)
   // On recherche le theme par dans la configuration, si rien n'est configuré on prend le theme polised par defaut.
   wApp->setCssTheme(WsLayoutProperties::instance()->get("global", "css_theme", "polished"));
   wApp->useStyleSheet(wApp->theme()->resourcesUrl() + "wittyshare/Css/wittyshare.css");
-  if(boost::filesystem::exists(wApp->docRoot() + "/wt/resources/js/functions.js"))
-          wApp->require(wApp->resourcesUrl() + "js/functions.js");
+  if (boost::filesystem::exists(wApp->docRoot() + "/wt/resources/js/functions.js"))
+    wApp->require(wApp->resourcesUrl() + "js/functions.js");
   if ( isPublicSite ) {
     bool enableLoginWindow = WsGlobalProperties::instance()->get("global", "login_window", "true") == "true" ? true : false;
     if (enableLoginWindow) {
@@ -64,11 +64,11 @@ WsApplication::WsApplication(const WEnvironment& env)
 
 void WsApplication::notify(const Wt::WEvent& event)
 {
-    try{
-        WApplication::notify(event);
-    }catch(std::exception& e){
-        wApp->log("ERROR") << "WsApplication::notify() : Exception caught" ;
-    }
+  try {
+    WApplication::notify(event);
+  } catch (std::exception& e) {
+    wApp->log("ERROR") << "WsApplication::notify() : Exception caught" ;
+  }
 }
 
 void WsApplication::doEndDialogLogon(std::string sUid, std::string pPassword)
@@ -100,18 +100,17 @@ void WsApplication::doEndDialogLogon(std::string sUid, std::string pPassword)
     int perms = m_pUser->getPermissions(truePath);
     if ( perms == ErrorCode::NotLogged ) {
       root()->clear();
-      wApp->root()->addWidget(new WsErrorPage(WsErrorPage::UnAuthorized, truePath,m_pUser, "", true)); 
+      wApp->root()->addWidget(new WsErrorPage(WsErrorPage::UnAuthorized, truePath, m_pUser, "", true));
       return;
     }
-    if( perms == ErrorCode::NotFound) {
+    if ( perms == ErrorCode::NotFound) {
       root()->clear();
-      wApp->root()->addWidget(new WsErrorPage(WsErrorPage::NotFound, truePath,m_pUser, "", true)); 
+      wApp->root()->addWidget(new WsErrorPage(WsErrorPage::NotFound, truePath, m_pUser, "", true));
       return;
     }
-
     if ( perms != GlobalConfig::Read && perms != GlobalConfig::ReadWrite)  {
       root()->clear();
-      wApp->root()->addWidget(new WsErrorPage(WsErrorPage::Forbidden, truePath,m_pUser, "", true)); 
+      wApp->root()->addWidget(new WsErrorPage(WsErrorPage::Forbidden, truePath, m_pUser, "", true));
       return;
     }
   } else {
@@ -201,7 +200,7 @@ void WsApplication::setTemplate(const std::string& sPageOrig)
     std::string     truePath(WsModules().pathWithoutPrefix(sPage));
     NodePtr rootNode = m_pUser->getAccessRoot();
     if ( !rootNode.get() ) {
-      root()->addWidget(new WsErrorPage(WsErrorPage::Error, sPage,m_pUser, "WsApplication::setTemplate() root node is null")); 
+      root()->addWidget(new WsErrorPage(WsErrorPage::Error, sPage, m_pUser, "WsApplication::setTemplate() root node is null"));
       return;
     }
     NodePtr curNode = rootNode.get()->eatPath(truePath);
@@ -236,7 +235,7 @@ void WsApplication::setTemplate(const std::string& sPageOrig)
       m_pContent = 0; // le template doit prevoir la creation du content
       m_pImages = 0;
       WsTemplate* pTemplate = new WsTemplate(sTemplate, sPath);
-      bool bUseLayout = WsLayoutProperties::instance()->get("global", "useLayout", "false") == "true" ? true : false; 
+      bool bUseLayout = WsLayoutProperties::instance()->get("global", "useLayout", "false") == "true" ? true : false;
       if ( bUseLayout ) {
         WVBoxLayout* vbox = new WVBoxLayout();
         vbox->setContentsMargins(0, 0, 0, 0);

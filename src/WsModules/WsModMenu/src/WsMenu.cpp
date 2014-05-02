@@ -105,8 +105,8 @@ void WsMenu::loadMenu(NodePtr pNodeParent, WMenu* menuParent)
   std::vector<NodePtr> dirNode = pNodeParent.get()->getAll();
   for (std::vector<NodePtr>::iterator it = dirNode.begin(); it != dirNode.end(); ++it) {
     NodePtr curNode = *it;
-    if(curNode.get()->getDisplayInMenu())
-        createMenu(curNode, menuParent);
+    if (curNode.get()->getDisplayInMenu())
+      createMenu(curNode, menuParent);
   }
 }
 
@@ -203,8 +203,8 @@ void WsMenu::loadPopupMenu(NodePtr pNodeParent, Wt::WPopupMenu* menuParent)
   std::vector<NodePtr> dirNode = pNodeParent->getAll();
   for (std::vector<NodePtr>::iterator it = dirNode.begin(); it != dirNode.end(); ++it) {
     NodePtr curNode = *it;
-    if(!curNode.get()->getDisplayInMenu())
-        continue;
+    if (!curNode.get()->getDisplayInMenu())
+      continue;
     bool popupAllowed = (curNode.get()->getProperties().get()->get("global", "allow_popup", "true") == "true" ? true : false);
     if ( curNode.get()->isDirectory() && popupAllowed ) {
       WPopupMenu* pSubPopupMenu = new WPopupMenu();

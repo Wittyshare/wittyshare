@@ -44,24 +44,24 @@ void WsPdf::load()
   addWidget(text);
   WText* pageCounter = new WText();
   pageCounter->setTextFormat(XHTMLUnsafeText);
-  pageCounter->setText("<span>Page: <span id='page_num'></span> / <span id='page_count'></span></span><a href='"+p+"'> Download Pdf File</a>");
+  pageCounter->setText("<span>Page: <span id='page_num'></span> / <span id='page_count'></span></span><a href='" + p + "'> Download Pdf File</a>");
   addWidget(pageCounter);
   if ( p.size() > 0 ) {
-      Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "pdfjs/src/pdf.js");
-      Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "pdfjs/src/shared/util.js");
-      Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "pdfjs/src/shared/colorspace.js");
-      Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "pdfjs/src/shared/function.js");
-      Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "pdfjs/src/shared/annotation.js");
-      Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "pdfjs/src/display/api.js");
-      Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "pdfjs/src/display/metadata.js");
-      Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "pdfjs/src/display/canvas.js");
-      Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "pdfjs/src/display/webgl.js");
-      Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "pdfjs/src/display/pattern_helper.js");
-      Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "pdfjs/src/display/font_loader.js");
-      Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "WsModPdf.js");
-      std::string javaScript = "\
+    Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "pdfjs/src/pdf.js");
+    Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "pdfjs/src/shared/util.js");
+    Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "pdfjs/src/shared/colorspace.js");
+    Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "pdfjs/src/shared/function.js");
+    Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "pdfjs/src/shared/annotation.js");
+    Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "pdfjs/src/display/api.js");
+    Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "pdfjs/src/display/metadata.js");
+    Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "pdfjs/src/display/canvas.js");
+    Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "pdfjs/src/display/webgl.js");
+    Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "pdfjs/src/display/pattern_helper.js");
+    Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "pdfjs/src/display/font_loader.js");
+    Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "WsModPdf.js");
+    std::string javaScript = "\
     PDFJS.workerSrc='" + WApplication::instance()->resourcesUrl() + "pdfjs/src/worker_loader.js';\
-      load('"+p+"')";
+      load('" + p + "')";
     WApplication::instance()->doJavaScript(javaScript);
   }
 }

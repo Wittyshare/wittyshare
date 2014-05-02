@@ -44,9 +44,8 @@ WsFormConfig::WsFormConfig(NodePtr pNode, WsModulesLoader& rMl, WContainerWidget
   */
   WsUser* pUser = WsApp->wsUser();
   //Test if user has write access
-  if(pUser->getPermissions(pNode->getPath().string()) != GlobalConfig::ReadWrite)
-  {
-    addWidget(new WsErrorPage(WsErrorPage::Forbidden,pNode->getPath().string(), pUser));
+  if (pUser->getPermissions(pNode->getPath().string()) != GlobalConfig::ReadWrite) {
+    addWidget(new WsErrorPage(WsErrorPage::Forbidden, pNode->getPath().string(), pUser));
     return;
   }
   WTable* pTable = new WTable();
@@ -120,19 +119,16 @@ WsFormConfig::WsFormConfig(NodePtr pNode, WsModulesLoader& rMl, WContainerWidget
   new WText("Template", pTable->elementAt(iRow, 0));
   m_pCBBTemplates = new Wt::WComboBox(pTable->elementAt(iRow, 2));
   std::string sTemplate = pNode.get()->getProperties().get()->get("global", "template", "stdSubPage.tpl");
-    
   std::vector<std::string> vTemplates;
   directory_iterator endItr;
   /* We iterate on all the entries of the directory */
   path p(pUser->getRootPath() / GlobalConfig::PathToTemplates);
-  if(exists(p)){
-      for (directory_iterator dItr(p); dItr != endItr; ++dItr) {
-          if(dItr->path().extension().string() == ".tpl")
-              vTemplates.push_back(dItr->path().filename().string());
-      }
+  if (exists(p)) {
+    for (directory_iterator dItr(p); dItr != endItr; ++dItr) {
+      if (dItr->path().extension().string() == ".tpl")
+        vTemplates.push_back(dItr->path().filename().string());
+    }
   }
-
-
   for ( int countTemplates = 0; countTemplates < vTemplates.size(); ++countTemplates) {
     m_pCBBTemplates->addItem(vTemplates[countTemplates]);
     if ( vTemplates[countTemplates] == sTemplate ) {
@@ -218,7 +214,7 @@ void WsFormConfig::doLock()
     m_pSave->hide();
     m_pLock->hide();
     std::string id = "";
-   /* get the uid of the locked */
+    /* get the uid of the locked */
     WsApp->wsUser()->isLocked(m_pNode->getPath().string(), id);
     addWidget(new WText("<font color='red'>The file is currently locked by \"" + id + "\". Please try again later</font>"));
     return;
@@ -352,7 +348,7 @@ void WsFormConfig::doSave()
   if ( m_pFhtmlEditor ) {
     wApp->log("notice") << "WsFormConfig::doSave() fhtml file = " << m_pNode->getFullPath(); // << " text = " <<  m_pFhtmlEditor->text().toUTF8();
     if (! pUser->writeFile(m_pNode->getPath().string(), m_pFhtmlEditor->text().toUTF8().c_str()))
-        wApp->log("notice") << "WsFormConfig::doSave() cannot open " << m_pNode->getFullPath();
+      wApp->log("notice") << "WsFormConfig::doSave() cannot open " << m_pNode->getFullPath();
   }
   std::string oldName = m_pNode->getPath().string();
   std::string newName = m_pNode->getPath().parent_path().string();

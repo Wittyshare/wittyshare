@@ -91,7 +91,7 @@ void WsContent::doEditPage(std::string path)
   WsUser*         pUser       = WsApp->wsUser();
   NodePtr         pNode       = pUser->getAccessRoot()->eatPath(sPathWithoutPrefix);
   if (!pNode.get() ) {
-    addWidget(new WsErrorPage(WsErrorPage::Error, path, pUser, "Returned node is null")); 
+    addWidget(new WsErrorPage(WsErrorPage::Error, path, pUser, "Returned node is null"));
     return;
   }
   clear();
@@ -202,16 +202,15 @@ void WsContent::setPath(std::string newPath)
   }
   int perms = pUser->getPermissions(sPathWithoutPrefix);
   if ( perms == ErrorCode::NotLogged ) {
-      addWidget(new WsErrorPage(WsErrorPage::UnAuthorized, p.string(), pUser)); 
-      return;
+    addWidget(new WsErrorPage(WsErrorPage::UnAuthorized, p.string(), pUser));
+    return;
   }
   if ( perms != GlobalConfig::Read && perms != GlobalConfig::ReadWrite) {
     clear();
-    if(perms == ErrorCode::NotFound){
-        addWidget(new WsErrorPage(WsErrorPage::NotFound, p.string(), pUser)); 
-    }
-    else{ 
-        addWidget(new WsErrorPage(WsErrorPage::Forbidden, p.string(), pUser)); 
+    if (perms == ErrorCode::NotFound) {
+      addWidget(new WsErrorPage(WsErrorPage::NotFound, p.string(), pUser));
+    } else {
+      addWidget(new WsErrorPage(WsErrorPage::Forbidden, p.string(), pUser));
     }
     return;
   }
@@ -235,20 +234,20 @@ void WsContent::setPath(std::string newPath)
     return siteMapChanged(newPath);
   //Edit and upload only available when editor
   if ( newPath.compare(0, 5, "/Edit") == 0)
-      if(perms == GlobalConfig::ReadWrite)
-          return doEditPage(newPath);
-      else {
-          addWidget(new WsErrorPage(WsErrorPage::Forbidden, newPath, pUser));
-          return;
-      }
+    if (perms == GlobalConfig::ReadWrite)
+      return doEditPage(newPath);
+    else {
+      addWidget(new WsErrorPage(WsErrorPage::Forbidden, newPath, pUser));
+      return;
+    }
   if ( newPath.compare(0, 11, "/FileUpload") == 0 )
-      if(perms == GlobalConfig::ReadWrite )
-          return buildFileUpload(newPath);
-      else {
-          addWidget(new WsErrorPage(WsErrorPage::Forbidden, newPath, pUser));
-          return;
-          }
-      selectWidget(newPath);
+    if (perms == GlobalConfig::ReadWrite )
+      return buildFileUpload(newPath);
+    else {
+      addWidget(new WsErrorPage(WsErrorPage::Forbidden, newPath, pUser));
+      return;
+    }
+  selectWidget(newPath);
 }
 
 void WsContent::selectWidget(std::string path)
@@ -264,13 +263,13 @@ void WsContent::selectWidget(std::string path)
     wApp->log("notice") << "WsContent::selectWidget :  path = " << path << " name = " << strName << " extension = " << strExt << " system path = " << sysPath;
   // This extension is mainly created for allowing text in a image without a link
   if ( strExt == ".nolink" ) {
-      addWidget(new WsErrorPage(WsErrorPage::Error, path, 0, "Extension not allowed", true));
-      return;
+    addWidget(new WsErrorPage(WsErrorPage::Error, path, 0, "Extension not allowed", true));
+    return;
   }
   // load the file in memory for some file format
   if ( strExt == ".fhtml" ) {
     if ( !gdcore_file_content2string(sysPath.c_str(), fileContent) ) {
-        addWidget(new WsErrorPage(WsErrorPage::NotFound, path, 0, "Cannot open URL", true));
+      addWidget(new WsErrorPage(WsErrorPage::NotFound, path, 0, "Cannot open URL", true));
       if ( m_bLogContent )
         wApp->log("notice") << "WsContent::selectWidget : cannot open : " << sysPath;
       return;
@@ -283,7 +282,7 @@ void WsContent::selectWidget(std::string path)
     if ( m_bLogContent )
       wApp->log("notice") << "WsContent::selectWidget : render a html file : " << sysPath;
     if ( !m_bAllowHtmlRendering ) {
-      addWidget(new WsErrorPage(WsErrorPage::Error, path, 0, "Rendering a html file is not allowed")); 
+      addWidget(new WsErrorPage(WsErrorPage::Error, path, 0, "Rendering a html file is not allowed"));
       return;
     }
     clear();
@@ -405,7 +404,7 @@ void WsContent::selectWidget(std::string path)
     //             return;
   }
   clear();
-  addWidget(new WsErrorPage(WsErrorPage::Error, path, 0, "Unknown extension", false)); 
+  addWidget(new WsErrorPage(WsErrorPage::Error, path, 0, "Unknown extension", false));
 }
 
 void WsContent::doSiteMapItemSelected(gdWFileView::signalType sigType, std::string selectedPath)
