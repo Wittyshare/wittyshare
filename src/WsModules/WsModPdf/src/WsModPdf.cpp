@@ -42,6 +42,10 @@ void WsPdf::load()
   text->setTextFormat(XHTMLUnsafeText);
   text->setText("<canvas id='the-canvas' style='border:1px solid black;'/><button id='prev' onclick='goPrevious()'>Previous</button> <button id='next' onclick='goNext()'>Next</button>");
   addWidget(text);
+  WText* pageCounter = new WText();
+  pageCounter->setTextFormat(XHTMLUnsafeText);
+  pageCounter->setText("<span>Page: <span id='page_num'></span> / <span id='page_count'></span></span><a href='"+p+"'> Download Pdf File</a>");
+  addWidget(pageCounter);
   if ( p.size() > 0 ) {
       Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "pdfjs/src/pdf.js");
       Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "pdfjs/src/shared/util.js");
@@ -54,36 +58,18 @@ void WsPdf::load()
       Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "pdfjs/src/display/webgl.js");
       Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "pdfjs/src/display/pattern_helper.js");
       Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "pdfjs/src/display/font_loader.js");
+      Wt::WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "WsModPdf.js");
       std::string javaScript = "\
     PDFJS.workerSrc='" + WApplication::instance()->resourcesUrl() + "pdfjs/src/worker_loader.js';\
-    PDFJS.getDocument('"+p+"').then(function(pdf) {\
-        pdf.getPage(1).then(function(page) {\
-            var scale = 1;\
-            var viewport = page.getViewport(scale);\
-            var canvas = document.getElementById('the-canvas');\
-            var context = canvas.getContext('2d');\
-            canvas.height = viewport.height;\
-            canvas.width = viewport.width;\
-            var renderContext = {\
-                canvasContext: context,\
-                viewport: viewport\
-            };\
-            page.render(renderContext);\
-            });\
-        });";
+      load('"+p+"')";
     WApplication::instance()->doJavaScript(javaScript);
   }
 }
 
 
-
-
-
 WsModPdf::WsModPdf()
   : WsModule()
 {
-  // Add the required javascript file
-  WApplication::instance()->require(WApplication::instance()->resourcesUrl() + "webpdf/src/pdf.js");
 }
 
 WsModPdf::~WsModPdf()
