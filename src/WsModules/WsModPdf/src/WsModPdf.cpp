@@ -40,7 +40,7 @@ void WsPdf::load()
   std::string  p(m_sDiffPath + p1);
   WText* text = new WText();
   text->setTextFormat(XHTMLUnsafeText);
-  text->setText("<canvas id='the-canvas' style='border:1px solid black;'/><button id='prev' onclick='goPrevious()'>Previous</button> <button id='next' onclick='goNext()'>Next</button>");
+  text->setText("<canvas id='the-canvas' style='border:1px solid black;'></canvas><button id='prev' onclick='goPrevious()'>Previous</button> <button id='next' onclick='goNext()'>Next</button>");
   addWidget(text);
   WText* pageCounter = new WText();
   pageCounter->setTextFormat(XHTMLUnsafeText);

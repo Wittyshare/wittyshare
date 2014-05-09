@@ -29,6 +29,7 @@
 #include "Main/WsFunctionnalities.h"
 #include "WsErrorPage.h"
 #include <ConfigManager/WsLayoutProperties.h>
+#include <Utils/WsUtils.h>
 
 using namespace Wt;
 
@@ -50,7 +51,7 @@ WsApplication::WsApplication(const WEnvironment& env)
   if ( isPublicSite ) {
     bool enableLoginWindow = WsGlobalProperties::instance()->get("global", "login_window", "true") == "true" ? true : false;
     if (enableLoginWindow) {
-      if ( cip.compare(0, 8, "192.168.") == 0 || cip.compare(0, 9, "127.0.0.1") == 0 ) {
+      if (WsUtils::ipValid(cip)) { //IP is 192.168.*.* or 127.0.*.*
         m_logon = new gdWLogon(sUid, sPwd, root());
         m_logon->logonValidated().connect(SLOT(this, WsApplication::doEndDialogLogon));
         m_logon->load();
@@ -228,6 +229,16 @@ void WsApplication::setTemplate(const std::string& sPageOrig)
     } else {
       sPath = m_sHomePage;
     }
+
+    std::string initPage = curNode.get()->getProperties().get()->get("global", "initial_page", "");
+    if(initPage.size() > 0){
+        NodePtr initNode = rootNode.get()->eatPath(truePath+"/"+initPage);
+        if(initNode.get()){
+            sTemplate = initNode.get()->getProperties().get()->get("global", "template", sTemplate);
+        }
+    }
+
+
     if ( sTemplate != m_sTemplate ) {
       m_sTemplate = sTemplate;
       root()->clear();
