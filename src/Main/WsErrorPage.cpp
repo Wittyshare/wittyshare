@@ -42,7 +42,7 @@ WsErrorPage::WsErrorPage(ErrorCode errorCode, const std::string& path, WsUser* u
     error = "Error while loading URL " + path  ;
     break;
   };
-  addWidget(new WText(error));
+  addWidget(new WText(error + "<br/>"));
   addWidget(new WText(msg));
   if (redirect) {
     Wt::WTimer* timer = new Wt::WTimer();

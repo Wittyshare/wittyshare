@@ -8,6 +8,7 @@ function load(url){
     pdfjs = PDFJS.getDocument(url);
     pdfjs.then(function getPdfHelloWorld(_pdfDoc) {
         pdfDoc = _pdfDoc;
+        pageNum = 1;
         renderPage(pageNum);
     });
 }
@@ -30,6 +31,14 @@ function renderPage(num) {
     });
     document.getElementById('page_num').textContent = pageNum;
     document.getElementById('page_count').textContent = pdfDoc.numPages;
+    if(pageNum == pdfDoc.numPages)
+        document.getElementById('next').disabled=true;
+    else
+        document.getElementById('next').disabled=false;
+    if(pageNum == 1)
+        document.getElementById('prev').disabled=true;
+    else
+        document.getElementById('prev').disabled=false;
 }
 
 //
