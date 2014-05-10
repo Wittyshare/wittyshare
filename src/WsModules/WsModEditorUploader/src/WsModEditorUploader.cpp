@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 #include <iostream>
-
+#define  BOOST_NO_CXX11_SCOPED_ENUMS
 #include <boost/filesystem.hpp>
 
 #include <Wt/WLogger>
