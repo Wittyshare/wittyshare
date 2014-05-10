@@ -61,10 +61,11 @@ void WsContentButtonsBar::doMenuEditPage(gdToolbarItem* pTbItem, WMouseEvent ev)
   std::string id = "";
   WsUser* pUser = WsApp->wsUser();
   //Test if path is a file or a directory
-  NodePtr pNode =  pUser->getAccessRoot()->eatPath(wApp->internalPath());
+  std::string pathwp = WsApp->WsModules().pathWithoutPrefix(wApp->internalPath());
+  NodePtr pNode =  pUser->getAccessRoot()->eatPath(pathwp);
   if (!pNode.get()) return;
   if (!pNode.get()->isDirectory()) {
-    int ret = WsApp->wsUser()->isLocked(wApp->internalPath(), id);
+    int ret = WsApp->wsUser()->isLocked(pathwp, id);
     if (ret != 1) {
       WMessageBox::show("Warning", "The file is currently locked by \"" + id + "\". Please try again later.", Ok);
       return;
@@ -217,11 +218,11 @@ void WsContentButtonsBar::doFileUpload(gdToolbarItem* pTbItem, WMouseEvent ev)
 {
   WsUser*           pUser                 = WsApp->wsUser();
   std::string       sDocumentRoot         = pUser->getRootPath(); // /var/www/demo_site
-  std::string       fullPath              = sDocumentRoot + wApp->internalPath();
-  std::string       currentPath           = wApp->internalPath();
+  std::string       fullPath              = sDocumentRoot + WsApp->WsModules().pathWithoutPrefix(wApp->internalPath());
+  std::string       currentPath           = WsApp->WsModules().pathWithoutPrefix(wApp->internalPath());
   boost::algorithm::replace_all(fullPath, "&amp;",  "&");
   //Test if path is a file or a directory
-  NodePtr pNode =  pUser->getAccessRoot()->eatPath(wApp->internalPath());
+  NodePtr pNode =  pUser->getAccessRoot()->eatPath(currentPath);
   if (!pNode.get()) return;
   if (!pNode.get()->isDirectory())
     currentPath = path(currentPath).parent_path().string();
