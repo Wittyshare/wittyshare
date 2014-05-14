@@ -146,8 +146,7 @@ void WsContentButtonsBar::doEndFolderNew()
     std::string currentPath = WsApp->WsModules().pathWithoutPrefix(wApp->internalPath());
     boost::algorithm::replace_all(currentPath, "&amp;",  "&");
     /* Remove useless / */
-    if (currentPath == "/")
-      currentPath = "";
+    LOG(DEBUG)<<"Current Path"<<currentPath;
     WsUser* pUser = WsApp->wsUser();
     //Test if path is a file or a directory
     NodePtr pNode =  pUser->getAccessRoot()->eatPath(currentPath);
@@ -155,6 +154,7 @@ void WsContentButtonsBar::doEndFolderNew()
     if (!pNode.get()->isDirectory())
       currentPath = path(currentPath).parent_path().string();
     std::string path2Create = currentPath + "/" + newName;
+    boost::algorithm::replace_all(path2Create, "//", "/");
     pUser->createNode(path2Create, WsUser::Directory);
     setNewInternalPath("/Edit" , path2Create, true);
   }
