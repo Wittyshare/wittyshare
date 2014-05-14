@@ -8,8 +8,11 @@
 #include <stdio.h>
 
 #include <iostream>
-#define BOOST_NO_CXX11_SCOPED_ENUMS
 #include <boost/filesystem.hpp>
+
+#include <fcntl.h>   // open
+#include <unistd.h>  // read, write, close
+#include <cstdio>    // BUFSIZ
 
 #include <Wt/WLogger>
 #include <Wt/WText>
@@ -106,9 +109,9 @@ void WsFileUpload::doUploaded()
     }
   }
   try {
-    boost::filesystem::copy_file(m_pFU->spoolFileName(), sNewFile, copy_option::overwrite_if_exists);
-    //  The remove is make by the Wt::WFileUpload class
-    //    boost::filesystem::remove(m_pFU->spoolFileName());
+
+    boost::filesystem::copy_file(m_pFU->spoolFileName(), sNewFile);
+
     boost::algorithm::replace_first(sNewFile, m_sDocumentRoot, "/Edit");
     sleep(1);
     std::string newNode = sNewFile;

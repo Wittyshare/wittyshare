@@ -229,7 +229,6 @@ void WsImages2::loadImage()
   gdImageProperties imgProp = gdImage_size(curImgUrl);
   boost::algorithm::replace_first(curImgUrl, wApp->docRoot(), "");
   WLink myLink(WLink::Url, curImgUrl);
-LOG(DEBUG)<<"---------------- image url ----------------"<<curImgUrl;
   if ( asString(option("imageInBackground")) == "true" ) {
     cwImg->decorationStyle().setBackgroundImage(myLink, Wt::WCssDecorationStyle::NoRepeat);
     if ( asString(option("textWidget")) == "true" ) {
