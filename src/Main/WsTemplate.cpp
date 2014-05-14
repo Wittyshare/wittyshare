@@ -169,7 +169,7 @@ void WsTemplate::resolveString(const std::string& varName, const std::vector< WS
     return WTemplate::resolveString(varName, args, result);
   }
   WsUser*             pUser                   = WsApp->wsUser();
-  std::string         m_sDocumentRoot         = pUser->getRootPath(); // /var/www/demo_site
+  std::string         m_sDocumentRoot         = pUser->getRootPath(); 
   std::string         m_httpDocumentRoot      = gdWApp->getParameter("DOCUMENT_ROOT", "/var/www");
   std::string         m_sRelativeDocumentRoot = m_sDocumentRoot;
   boost::algorithm::replace_first(m_sRelativeDocumentRoot, m_httpDocumentRoot, "");

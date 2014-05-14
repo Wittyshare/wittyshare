@@ -266,17 +266,6 @@ void WsContent::selectWidget(std::string path)
     addWidget(new WsErrorPage(WsErrorPage::Error, path, 0, "Extension not allowed", true));
     return;
   }
-  // load the file in memory for some file format
-  if ( strExt == ".fhtml" ) {
-    if ( !gdcore_file_content2string(sysPath.c_str(), fileContent) ) {
-      addWidget(new WsErrorPage(WsErrorPage::NotFound, path, 0, "Cannot open URL", true));
-      if ( m_bLogContent )
-        wApp->log("notice") << "WsContent::selectWidget : cannot open : " << sysPath;
-      return;
-    }
-    if ( m_bLogContent )
-      wApp->log("notice") << "WsContent::selectWidget : file " << sysPath << " size = " << fileContent.size();
-  }
   // .html
   if ( strExt == ".html" ) {
     if ( m_bLogContent )
@@ -291,29 +280,6 @@ void WsContent::selectWidget(std::string path)
     pIFrame->setTextFormat(XHTMLUnsafeText);
     pIFrame->setText("<iframe src='" + m_sRelativeDocumentRoot + path + "' height='98%' width='100%' frameborder='0'></iframe>");
     addWidget(pIFrame);
-    return;
-  }
-  // .fhtml (fragmented html)
-  if ( strExt == ".fhtml" ) {
-    clear();
-    WsApp->hideImages(false);
-    WText* wtext = new WText();
-    // SD -> let fhtml have some iframe and js
-    wtext->setTextFormat(Wt::XHTMLUnsafeText);
-    wtext->setText(fileContent);
-    bool bUseLayout = false;
-    if ( !bUseLayout ) {
-      //setOverflow(WContainerWidget::OverflowAuto);
-      addWidget(wtext);
-    } else {
-      setOverflow(WContainerWidget::OverflowHidden);
-      WContainerWidget* cw = new WContainerWidget();
-      cw->setOverflow(WContainerWidget::OverflowAuto);
-      cw->addWidget(wtext);
-      WVBoxLayout*  vBox = new WVBoxLayout();
-      vBox->addWidget(cw, 1);
-      setLayout(vBox);
-    }
     return;
   }
   // .form
@@ -386,7 +352,6 @@ void WsContent::selectWidget(std::string path)
       return;
     }
   }
-  // Pdf TODO : tester ce code avec des pdf devant s'afficher dans la vue
   if ( strExt == ".pdf" ) {
     if ( m_bLogContent )
       wApp->log("notice") << "WsContent::selectWidget : render a " << strExt << " file : " << sysPath;
@@ -395,13 +360,6 @@ void WsContent::selectWidget(std::string path)
     WsApp->hideImages(false);
     addWidget(new WText("Download file : " + path + " ..."));
     return wApp->redirect(m_sRelativeDocumentRoot + path);
-    //             WAnchor* m_anchor = new WAnchor(this);
-    //             m_anchor->setTarget(Wt::TargetNewWindow);
-    //             m_anchor->setText(path);
-    //             fileResource* pRes = new fileResource(sysPath, this);
-    //             m_anchor->setRef(pRes->generateUrl());
-    //             m_anchor->clicked().emit(WMouseEvent());
-    //             return;
   }
   clear();
   addWidget(new WsErrorPage(WsErrorPage::Error, path, 0, "Unknown extension", false));

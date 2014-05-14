@@ -39,11 +39,10 @@ void WsBottomBanner::setText(const std::string& rText)
   std::string     m_sDocumentRoot = pUser->getRootPath(); // /var/www/demo_site
   std::string     sFile           = m_sDocumentRoot + rText;
   std::string     fileContent;
-  if ( m_bDebug )
-    if ( !gdcore_file_content2string(sFile.c_str(), fileContent) ) {
-      wApp->log("error") << " WsBottomBanner::setText : cannot open : " << sFile;
-      return;
-    }
+  if ( !gdcore_file_content2string(sFile.c_str(), fileContent) ) {
+	  wApp->log("error") << " WsBottomBanner::setText : cannot open : " << sFile;
+	  return;
+  }
   m_pWText->setText(fileContent);
 }
 

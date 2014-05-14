@@ -25,6 +25,7 @@ SUBDIRS (
   WsModNewsLetter
   WsModOdf
   WsModPdf
+  WsModFhtml
   WsModRSS
   WsModTwitter
   WsModVideo
