@@ -31,4 +31,5 @@ SUBDIRS (
   WsModVideo
   WsModZip
   WsModTwitterStream
+  WsModImageViewer
 )

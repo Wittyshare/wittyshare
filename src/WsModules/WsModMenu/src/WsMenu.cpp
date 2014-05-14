@@ -230,9 +230,6 @@ WLink WsMenu::makeLink(const std::string& path, bool bUseIcon)
   boost::algorithm::replace_first(m_sRelativeDocumentRoot, m_httpDocumentRoot, ""); // /demo_site
   WLink  lnk;
   std::string     strExt(boost::filesystem::extension(path));
-  if ( strExt == "" || strExt == ".fhtml" || strExt == ".rpg" || strExt == ".itpl" || strExt == ".form" || strExt == ".youtube" )
-    lnk.setInternalPath(path);
-  else {
     if ( strExt == ".url" ) {
       boost::filesystem::path urlFile(m_sDocumentRoot + path);
       std::string sUrl;
@@ -241,8 +238,8 @@ WLink WsMenu::makeLink(const std::string& path, bool bUseIcon)
       boost::algorithm::replace_all(sUrl, "link=", "");
       lnk.setUrl(sUrl);
     } else
-      lnk.setUrl(m_sRelativeDocumentRoot + path);
-  }
+    lnk.setInternalPath(path);
+    //lnk.setUrl(m_sRelativeDocumentRoot + path);
   return lnk;
 }
 
