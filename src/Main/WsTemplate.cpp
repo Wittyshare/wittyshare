@@ -135,7 +135,6 @@ void WsTemplate::resolveString(const std::string& varName, const std::vector< WS
       if ( attr == "overflow" )
         overflow = val;
     }
-    //if ( bUseLayout ) { }
     if ( overflow == "auto" )
       pContent->setOverflow(WContainerWidget::OverflowAuto);
     if ( m_sInitialPath.size() > 0 ) sHomePage = m_sInitialPath;
@@ -145,7 +144,6 @@ void WsTemplate::resolveString(const std::string& varName, const std::vector< WS
       pContent->setPath(sHomePage);
     return WTemplate::resolveString(varName, args, result);
   }
-  //if ( varName == "WsTemplate" ) {
   std::string moduleName = "WsTemplate";
   if ( varName.compare(0, moduleName.size(), moduleName) == 0 ) {
     std::string templateFile;

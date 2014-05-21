@@ -53,8 +53,11 @@ WsFormConfig::WsFormConfig(NodePtr pNode, WsModulesLoader& rMl, WContainerWidget
   // Les dates sont sockées en string format time_t TODO : add try/catch
   // Publish Date
   WDateTime                dt(WDateTime::currentDateTime());
+  try{
   std::string sDateTime  = pNode.get()->getProperties().get()->get("global", "publish_date", boost::lexical_cast<std::string>(dt.toTime_t()));
+
   m_wDateTime.setTime_t(boost::lexical_cast<time_t>(sDateTime));
+  }catch(std::exception &e){}
   Wt::WRegExpValidator* validatorName = new Wt::WRegExpValidator("[a-zA-Z0-9._& ]{2,48}");
   new WText("(new ?) name", pTable->elementAt(iRow, 0));
   m_sName                = pNode.get()->getName();
@@ -98,23 +101,23 @@ WsFormConfig::WsFormConfig(NodePtr pNode, WsModulesLoader& rMl, WContainerWidget
   std::string sInheritRights = pNode.get()->getProperties().get()->get("global", "inherit_rights_from_parent", "false");
   if ( sInheritRights == "true" )
     m_pCBInheritRights->setCheckState(Wt::Checked);
-  m_bInheritRights = m_pCBInheritRights->checkState();
+
   m_pCBInMenu    = new WCheckBox("In menu", pTable->elementAt(iRow, 2));
   // TODO : Il faut activer ce qui apparait dans les menus ?
   std::string sInMenu = pNode.get()->getProperties().get()->get("global", "in_menu", "false");
   if ( sInMenu == "true" )
     m_pCBInMenu->setCheckState(Wt::Checked);
-  m_binMenu = m_pCBInMenu->checkState();
+
   std::string sSort = pNode.get()->getProperties().get()->get("global", "sort", "false");
   m_pCBSort    = new WCheckBox("Sort", pTable->elementAt(iRow, 4));
   if ( sSort == "true" )
     m_pCBSort->setCheckState(Wt::Checked);
-  m_bSort = m_pCBSort->checkState();
+
   m_pCBInView = new WCheckBox("In view", pTable->elementAt(iRow, 6));
   std::string sInView = pNode.get()->getProperties().get()->get("global", "in_view", "true");
   if ( sInView == "true" )
     m_pCBInView->setCheckState(Wt::Checked);
-  m_binView = m_pCBInView->checkState();
+
   iRow++;
   new WText("Template", pTable->elementAt(iRow, 0));
   m_pCBBTemplates = new Wt::WComboBox(pTable->elementAt(iRow, 2));
@@ -269,7 +272,6 @@ void WsFormConfig::doSave()
   }
   if ( !m_pName->validate() ) return;
   if ( !m_pSortNumber->validate() ) return;
-  bool     bUpdated = false;
   WDateTime   dt(m_pDatePicker->date(), WTime::currentServerTime());
   std::string sDateTime    = dt.toString("yyyy-MM-dd hh:mm:ss").narrow();
   std::string sName        = m_pName->text().toUTF8();
@@ -300,51 +302,31 @@ void WsFormConfig::doSave()
   WsUser* pUser = WsApp->wsUser();
   if ( m_wDateTime != dt ) {
     m_pNode->getProperties().get()->set("global", "publish_date",      boost::lexical_cast<std::string>(dt.toTime_t()));
-    bUpdated = true;
   }
   if ( m_pNode->isDirectory() ) {
     if ( m_sInitPage != sInitPage )
       m_pNode->getProperties().get()->set("global", "initial_page",         sInitPage);
-    bUpdated = true;
   }
   if ( m_sDisplayName != sDisplayName ) {
     m_pNode->getProperties().get()->set("global", "display_name",      sDisplayName);
-    bUpdated = true;
   }
   if ( m_sAuthor != sAuthor ) {
     m_pNode->getProperties().get()->set("global", "author",            sAuthor);
-    bUpdated = true;
-  }
-  if ( m_binMenu != m_pCBInMenu->checkState() ) {
-    m_pNode->getProperties().get()->set("global", "in_menu",           sInMenu);
-    bUpdated = true;
-  }
-  if ( m_binView != m_pCBInView->checkState() ) {
-    m_pNode->getProperties().get()->set("global", "in_view",           sInView);
-    bUpdated = true;
   }
   if ( sTemplate != m_sTemplate ) {
     m_pNode->getProperties().get()->set("global", "template",          sTemplate);
-    bUpdated = true;
   }
   if ( m_sShortDesc != sShortDesc ) {
     m_pNode->getProperties().get()->set("global", "short_description", sShortDesc);
-    bUpdated = true;
-  }
-  if ( m_bSort != m_pCBSort->checkState() ) {
-    m_pNode->getProperties().get()->set("global", "sort",              sSort);
-    bUpdated = true;
   }
   if ( m_lSortNumber != boost::lexical_cast<long>(sSortNumber) ) {
     m_pNode->getProperties().get()->set("global", "sort_number",       sSortNumber);
-    bUpdated = true;
   }
-  if ( m_bInheritRights != m_pCBInheritRights->checkState() ) {
-    m_pNode->getProperties().get()->set("global", "inherit_rights_from_parent",      sInheritRights);
-    bUpdated = true;
-  }
-  if ( bUpdated )
-    pUser->saveProperties(m_pNode->getProperties().get(), m_pNode->getPath().string());
+  m_pNode->getProperties().get()->set("global", "in_menu",           sInMenu);
+  m_pNode->getProperties().get()->set("global", "in_view",           sInView);
+  m_pNode->getProperties().get()->set("global", "sort",              sSort);
+  m_pNode->getProperties().get()->set("global", "inherit_rights_from_parent",      sInheritRights);
+  pUser->saveProperties(m_pNode->getProperties().get(), m_pNode->getPath().string());
   if ( m_pFhtmlEditor ) {
     wApp->log("notice") << "WsFormConfig::doSave() fhtml file = " << m_pNode->getFullPath(); // << " text = " <<  m_pFhtmlEditor->text().toUTF8();
     if (! pUser->writeFile(m_pNode->getPath().string(), m_pFhtmlEditor->text().toUTF8().c_str()))

@@ -70,12 +70,8 @@ private :
   std::string        m_sDisplayName;
   std::string        m_sAuthor;
   std::string        m_sTemplate;
-  bool               m_binMenu;
-  bool               m_binView;
   std::string        m_sShortDesc;
-  bool               m_bSort;
   long               m_lSortNumber;
-  bool               m_bInheritRights;
   bool               m_bUseTextArea;
 };
 
