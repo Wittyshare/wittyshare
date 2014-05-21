@@ -32,13 +32,13 @@ function renderPage(num) {
     document.getElementById('page_num').textContent = pageNum;
     document.getElementById('page_count').textContent = pdfDoc.numPages;
     if(pageNum == pdfDoc.numPages)
-        document.getElementById('next').disabled=true;
+        document.getElementById('controlArrowNext').disabled=true;
     else
-        document.getElementById('next').disabled=false;
+        document.getElementById('controlArrowNext').disabled=false;
     if(pageNum == 1)
-        document.getElementById('prev').disabled=true;
+        document.getElementById('controlArrowPrev').disabled=true;
     else
-        document.getElementById('prev').disabled=false;
+        document.getElementById('controlArrowPrev').disabled=false;
 }
 
 //
@@ -61,6 +61,3 @@ function goNext() {
     renderPage(pageNum);
 }
 
-//
-// Asynchronously download PDF as an ArrayBuffer
-//

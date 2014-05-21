@@ -39,6 +39,7 @@ void WsPdf::setDiffPath(const std::string& diffPath)
 
 void WsPdf::load()
 {
+  wApp->useStyleSheet(WApplication::instance()->resourcesUrl() + "WsModPdf.css");
   WContainerWidget::load();
   resize(WLength(100, WLength::Percentage), WLength(100, WLength::Percentage));
   setOverflow(WContainerWidget::OverflowAuto);
@@ -46,13 +47,14 @@ void WsPdf::load()
   std::string  p(m_sDiffPath + p1);
   WText* canvas = new WText();
   canvas->setTextFormat(XHTMLUnsafeText);
-  canvas->setText("<canvas id='the-canvas' style='border:1px solid black;'></canvas>");
+  canvas->setText("\
+	<div id='pdfContainer'>\
+		<button class='controlArrow' id='controlArrowPrev' onclick='goPrevious()'></button>\
+		<canvas id='the-canvas'></canvas>\
+		<button class='controlArrow' id='controlArrowNext' onclick='goNext()'></button>\
+	</div>");
   addWidget(canvas);
 
-  WText* text = new WText();
-  text->setTextFormat(XHTMLUnsafeText);
-  text->setText("<button id='prev' onclick='goPrevious()'>Previous</button> <button id='next' onclick='goNext()'>Next</button>");
-  addWidget(text);
   WText* pageCounter = new WText();
   pageCounter->setTextFormat(XHTMLUnsafeText);
   pageCounter->setText("<span>Page: <span id='page_num'></span> / <span id='page_count'></span></span>");
@@ -62,6 +64,7 @@ void WsPdf::load()
   WFileResource *pdf = new Wt::WFileResource("application/pdf" ,dlPath);
   pdf->suggestFileName(boost::filesystem::path(dlPath).filename().string());
   Wt::WAnchor *anchor = new Wt::WAnchor(pdf, "Download PDF");
+  anchor->setId("pdfDownload");
   addWidget(anchor);
 
   if ( p.size() > 0 ) {

@@ -175,7 +175,6 @@ WsApplication::~WsApplication()
 
 void WsApplication::doPathChanged(std::string newPath)
 {
-  LOG(DEBUG)<<"SETTING TEMPLATE FOR " <<newPath;
   setTemplate(newPath);
 }
 
