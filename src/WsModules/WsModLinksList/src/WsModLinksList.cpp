@@ -80,7 +80,7 @@ void WsLinksList::load()
   boost::replace_all(rootUrl, wApp->docRoot(), "");
   std::string path = WsApplication::wsInstance()->internalPath();
   std::string sWithoutPrefix   = WsApp->WsModules().pathWithoutPrefix(path);
-  std::string rootPath = asString(option("rootPath")).narrow();
+  std::string rootPath = asString(option("path")).narrow();
   boost::algorithm::replace_all(rootPath, "&amp;",  "&");
   if ( rootPath.size() < 1 ) rootPath = path;
   NodePtr root = pUser->getAccessRoot();

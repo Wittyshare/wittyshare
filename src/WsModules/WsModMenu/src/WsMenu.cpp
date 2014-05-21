@@ -48,7 +48,7 @@ void WsMenu::load()
   WContainerWidget::load();
   addStyleClass("WsMenu");
   doLoadCurPath();
-  wApp->internalPathChanged().connect(SLOT(this, WsMenu::doPathChanged));
+  wApp->internalPathChanged().connect(this, &WsMenu::doPathChanged);
 }
 
 void WsMenu::doLoadCurPath()
@@ -56,10 +56,12 @@ void WsMenu::doLoadCurPath()
   std::string rootPath = asString(option("rootPath")).toUTF8();
   boost::algorithm::replace_all(rootPath, "&amp;",  "&");
   // Si pas de root path on prend l'internal Path
-  if ( rootPath.size() < 1 )
+ 
+  if ( rootPath.size() < 1 ){
     m_sCurPath = WsApp->internalPath();
-  else
+  }else
     m_sCurPath = rootPath;
+
   std::string sWithoutPrefix = WsApp->WsModules().pathWithoutPrefix(m_sCurPath);
   WsUser*         pUser     = WsApp->wsUser();
   NodePtr tmpNode = pUser->getAccessRoot().get()->eatPath(sWithoutPrefix);
@@ -158,11 +160,6 @@ void WsMenu::createMenu(NodePtr curNode, WMenu* menuParent)
       if ( !(asString(option("noRootPopup")) == "true" && curNode.get()->getPath() == "/") ) {
         WPopupMenu* pPopup = new WPopupMenu();
         pPopup->addStyleClass("wt-no-reparent");
-        //           pPopup->resize(200, 150);
-        //           pPopup->resize(WLength::Auto, 150);
-        //           pPopup->setMaximumSize(WLength::Auto, 150);
-        //           pPopup->setMaximumSize(300, 150);
-        //           pPopup->setHeight(150);
         loadPopupMenu(curNode, pPopup);
         button->setMenu(pPopup);
         pPopup->setAutoHide(true);
@@ -273,9 +270,10 @@ void WsMenu::doPathChanged(std::string newPath)
 {
   if ( asString(option("useInternalPath")) == "true" ) {
     clear();
+    m_sCurPath = newPath,
     doLoadCurPath();
   }
-  doSelectedMenu(newPath);
+ // doSelectedMenu(newPath);
 }
 
 void WsMenu::doSelectedMenu(std::string newPath)
@@ -291,7 +289,6 @@ void WsMenu::doSelectedMenu(std::string newPath)
     if ( curPath.compare(0, curPath.size(), newPath) != 0 ) continue;
     m_vPushButton[iBut]->addStyleClass("WsSelected");
     WPopupMenu* pPopup = m_vPushButton[iBut]->menu();
-    //    if ( m_vPushButton[iBut]->
   }
 }
 

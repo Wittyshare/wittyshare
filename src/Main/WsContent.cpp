@@ -134,21 +134,10 @@ void WsContent::siteMapChanged(std::string newPath)
 void WsContent::doSearch(WString sSearch)
 {
   clear();
-  //    addWidget(new WText("searching : " + sSearch));
-  //    WVBoxLayout*  vBox = new WVBoxLayout();
   WsSearchView* srchView = new WsSearchView(sSearch.toUTF8(), this);
   resize(WLength(100, WLength::Percentage), WLength(100, WLength::Percentage));
   addWidget(srchView);
-  //    vBox->addWidget(srchView, 1);
-  //    if ( srchView->navBar() )
-  //       vBox->addWidget(srchView->navBar(), 0);
-  //    setLayout(vBox);
 }
-
-//void WsContent::doPathChanged(std::string newPath)
-// {
-//  WsApp->setTemplate(newPath);
-// }
 
 void WsContent::viewDirectory(const std::string& path)
 {
@@ -183,7 +172,6 @@ void WsContent::viewDirectory(const std::string& path)
     setOverflow(WContainerWidget::OverflowHidden);
   } else {
     addWidget(w);
-    //     resize(WLength(100, WLength::Percentage), WLength(100, WLength::Percentage));
     setOverflow(WContainerWidget::OverflowAuto);
   }
 }
@@ -252,7 +240,6 @@ void WsContent::setPath(std::string newPath)
 
 void WsContent::selectWidget(std::string path)
 {
-  // TODO : afficher les erreurs dans un WDialogBox ou renvoyer vers page d'erreur
   std::string             sysPath(m_sDocumentRoot + path);
   boost::filesystem::path p(path);
   std::string             strExt (p.extension().string());
@@ -352,6 +339,7 @@ void WsContent::selectWidget(std::string path)
       return;
     }
   }
+
   if ( strExt == ".pdf" ) {
     if ( m_bLogContent )
       wApp->log("notice") << "WsContent::selectWidget : render a " << strExt << " file : " << sysPath;

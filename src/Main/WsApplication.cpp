@@ -175,6 +175,7 @@ WsApplication::~WsApplication()
 
 void WsApplication::doPathChanged(std::string newPath)
 {
+  LOG(DEBUG)<<"SETTING TEMPLATE FOR " <<newPath;
   setTemplate(newPath);
 }
 
@@ -254,7 +255,6 @@ void WsApplication::setTemplate(const std::string& sPageOrig)
         root()->setLayout(vbox);
       } else {
         root()->addWidget(pTemplate);
-        //           root()->resize(WLength(100, WLength::Percentage), WLength(100, WLength::Percentage));
       }
       return;
     }

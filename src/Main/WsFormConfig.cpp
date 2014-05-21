@@ -23,7 +23,6 @@ using namespace Wt;
 WsFormConfig::WsFormConfig(NodePtr pNode, WsModulesLoader& rMl, WContainerWidget* parent)
   : WContainerWidget(parent), m_pNode(pNode), m_ml(rMl), m_pAuthor(0), m_pShortDescEditor(0), m_pShortDescTextArea(0), m_pCBInMenu(0), m_pCBInView(0), m_pFhtmlEditor(0), m_pInitPage(0), m_bUseTextArea(true), m_pSave(0), m_pLock(0), m_pTimer(0), m_pTimerTick(0), m_timeLockLeft(0)
 {
-  //  if ( WsLayoutProperties::instance()->get("global", "by_object_stylesheet", "false") == "true" )
   if ( WString::tr("byObjectStyleSheet").narrow() == "true" )
     wApp->useStyleSheet(wApp->theme()->resourcesUrl() + "wittyshare/Css/WsFormConfig.css");
   addStyleClass("WsFormConfig");
@@ -77,7 +76,6 @@ WsFormConfig::WsFormConfig(NodePtr pNode, WsModulesLoader& rMl, WContainerWidget
   m_pDatePicker->setDate(m_wDateTime.date());
   // Display name : pNode->getDisplayName() return the pNode->getName if the display_name is empty.
   new WText("Display name", pTable->elementAt(iRow, 4));
-  //  std::string ds         = pNode->getProperties().get()->get("global", "display_name",  pNode->getName());
   m_sDisplayName         = pNode.get()->getDisplayName(true);
   m_pDisplayName         = new WLineEdit(WString::fromUTF8(m_sDisplayName), pTable->elementAt(iRow, 6));
   m_pDisplayName->setTextSize(60);
@@ -103,7 +101,6 @@ WsFormConfig::WsFormConfig(NodePtr pNode, WsModulesLoader& rMl, WContainerWidget
     m_pCBInheritRights->setCheckState(Wt::Checked);
 
   m_pCBInMenu    = new WCheckBox("In menu", pTable->elementAt(iRow, 2));
-  // TODO : Il faut activer ce qui apparait dans les menus ?
   std::string sInMenu = pNode.get()->getProperties().get()->get("global", "in_menu", "false");
   if ( sInMenu == "true" )
     m_pCBInMenu->setCheckState(Wt::Checked);
@@ -175,10 +172,8 @@ WsFormConfig::WsFormConfig(NodePtr pNode, WsModulesLoader& rMl, WContainerWidget
   pPanel->setTitle(title);
   pPanel->setCentralWidget(pCW);
   pPanel->setCollapsible(true);
-  //  pPanel->setOverflow(Wt::WContainerWidget::OverflowAuto);
   addWidget(pPanel);
   pPanel->expand();
-  //pCW->addWidget(new WText("Modules specifics options"));
   for (int iModule = 0; iModule < m_ml.modules().size(); iModule++) {
     WsModule* curModule = m_ml.modules()[iModule]->module;
     if ( !curModule->isLoaded() ) continue;

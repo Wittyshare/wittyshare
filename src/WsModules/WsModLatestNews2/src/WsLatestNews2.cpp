@@ -75,7 +75,7 @@ void WsLatestNews2::setTable()
   WsUser* user = WsApplication::wsInstance()->wsUser();
   std::string path = WsApplication::wsInstance()->internalPath();
   std::string sWithoutPrefix   = WsApp->WsModules().pathWithoutPrefix(path);
-  std::string rootPath = asString(option("rootPath")).narrow();
+  std::string rootPath = asString(option("path")).narrow();
   boost::algorithm::replace_all(rootPath, "&amp;",  "&");
   if ( rootPath.size() < 1 ) rootPath = user->getProperty(sWithoutPrefix, WSMODLATESTNEWS, ROOT, "");
   NodePtr root;
