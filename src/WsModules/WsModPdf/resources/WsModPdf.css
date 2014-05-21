@@ -1,0 +1,46 @@
+#pdfContainer {
+  position:relative;
+  width:100%;
+ text-align:center;
+}
+
+#the-canvas
+{
+  z-index:1000;
+  position:relative;
+}
+.controlArrow
+{ 
+  z-index:1001;
+  bottom: 50%;
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  border: 0 none;
+  background-color: transparent;
+  opacity : 0.4;
+}
+
+.controlArrow:hover{
+  opacity: 1.0;
+}
+
+.controlArrow[disabled], .controlArrow[disabled]:hover {
+  visibility: hidden;
+}
+
+
+#controlArrowPrev {
+left: 0;
+  background-image: url("images/left.png");
+}
+
+
+#controlArrowNext {
+  right: 0;
+  background-image: url("images/right.png");
+}
+
+#pdfDownload{
+float: right;
+}
